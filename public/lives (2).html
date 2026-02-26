@@ -502,10 +502,19 @@ window.addEventListener('DOMContentLoaded', () => {
   const user = getSession();
   if (user && user.role === 'admin') {
     document.getElementById('liveSetup').style.display = 'block';
+  } else {
+    document.getElementById('noLiveBox').style.display = 'block';
   }
   updateCmtUI();
-  // Vérifier si un live est en cours
-  socket.emit('check_live');
+
+  // Attendre que Socket.io soit connecté avant de vérifier le live
+  socket.on('connect', () => {
+    console.log('✅ Socket connecté:', socket.id);
+    socket.emit('check_live');
+  });
+  if (socket.connected) {
+    socket.emit('check_live');
+  }
 });
 </script>
 </body>
