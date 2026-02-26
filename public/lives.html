@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>GLORY – Lives</title>
   <link rel="stylesheet" href="style.css"/><link rel="manifest" href="manifest.json"/>
+  <script src="/socket.io/socket.io.js"></script>
   <style>
     .live-setup{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:2rem;max-width:900px;margin:0 auto 2rem;display:none;}
     .live-setup h3{font-family:'Cinzel Decorative',cursive;color:var(--gold);font-size:1rem;margin-bottom:1.5rem;}
@@ -65,6 +66,11 @@
     .schedule-date{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
     .schedule-card h4{font-family:'Playfair Display',serif;color:var(--white);margin-bottom:.3rem;}
     .schedule-card p{color:var(--text-muted);font-size:.83rem;}
+    /* Bandeau spectateur */
+    .viewer-live-banner{background:rgba(229,62,62,.08);border:1px solid rgba(229,62,62,.3);border-radius:8px;padding:1.2rem 1.5rem;max-width:900px;margin:0 auto 1.5rem;display:none;align-items:center;gap:1rem;}
+    .viewer-live-banner.show{display:flex;}
+    .viewer-live-banner .live-badge{animation:blink 1s infinite;}
+    .viewer-live-title{color:var(--gold);font-family:'Playfair Display',serif;font-size:1rem;}
     @media(max-width:768px){.live-main{grid-template-columns:1fr;}}
   </style>
 </head>
@@ -72,25 +78,36 @@
 <div class="page-content">
   <div class="section-wrap">
     <div class="section-header">
-      <span class="section-tag" data-i18n="live_tag">✦ En Direct ✦</span>
-      <h2 class="section-title" data-i18n="live_title">GLORY Live</h2>
+      <span class="section-tag">✦ En Direct ✦</span>
+      <h2 class="section-title">GLORY Live</h2>
       <div class="section-line"></div>
     </div>
+
+    <!-- Bandeau spectateur : live en cours -->
+    <div class="viewer-live-banner" id="viewerBanner">
+      <span class="live-badge">🔴 EN DIRECT</span>
+      <span class="viewer-live-title" id="viewerLiveTitle"></span>
+      <span style="color:var(--text-muted);font-size:.82rem;margin-left:auto;">👁 <span id="viewerCountBanner">0</span> spectateur(s)</span>
+    </div>
+
+    <!-- Setup admin -->
     <div class="live-setup" id="liveSetup">
       <h3>⚙ Configurer ton Live</h3>
       <div class="form-group" style="margin-bottom:1.2rem;">
-        <label data-i18n="live_title_placeholder">Titre du live</label>
+        <label>Titre du live</label>
         <input type="text" id="liveTitle" placeholder="Ex: Culte du Dimanche, Soirée de Prière..."/>
       </div>
       <div class="form-group">
         <label>Type de live</label>
         <div class="live-type-btns">
-          <button class="live-type-btn video sel" id="btnTypeVideo" onclick="selectType('video')" data-i18n="live_type_video">🎥 Vidéo + Audio</button>
-          <button class="live-type-btn audio" id="btnTypeAudio" onclick="selectType('audio')" data-i18n="live_type_audio">🎙 Audio seulement</button>
+          <button class="live-type-btn video sel" id="btnTypeVideo" onclick="selectType('video')">🎥 Vidéo + Audio</button>
+          <button class="live-type-btn audio" id="btnTypeAudio" onclick="selectType('audio')">🎙 Audio seulement</button>
         </div>
       </div>
-      <button class="btn-start-live" onclick="startLive()" data-i18n="live_launch">🔴 Lancer le Live</button>
+      <button class="btn-start-live" onclick="doStartLive()">🔴 Lancer le Live</button>
     </div>
+
+    <!-- Live principal -->
     <div class="live-main" id="liveMain">
       <div>
         <div class="live-player-box" id="liveBox">
@@ -102,18 +119,18 @@
               <div class="live-title-hud" id="liveTitleHud"></div>
             </div>
             <div class="hud-right">
-              <div class="viewers-badge">👁 <span id="viewersCount">0</span> <span data-i18n="live_viewers">spectateur(s)</span></div>
+              <div class="viewers-badge">👁 <span id="viewersCount">0</span> spectateur(s)</div>
               <div class="timer-badge" id="timerDisplay">00:00:00</div>
             </div>
           </div>
           <div class="reactions-float" id="reactionsFloat"></div>
         </div>
         <canvas id="audioVisualizer"></canvas>
-        <div style="text-align:center;"><button class="btn-stop-live" id="btnStopLive" onclick="stopLive()" data-i18n="live_stop">⏹ Arrêter le Live</button></div>
+        <div style="text-align:center;"><button class="btn-stop-live" id="btnStopLive" onclick="doStopLive()">⏹ Arrêter le Live</button></div>
       </div>
       <div class="live-sidebar">
         <div class="react-section">
-          <div class="react-section-title" data-i18n="live_react">Réagir au live</div>
+          <div class="react-section-title">Réagir au live</div>
           <div class="react-btns">
             <button class="react-btn" onclick="sendReaction('👍')">👍</button>
             <button class="react-btn" onclick="sendReaction('🧡')">🧡</button>
@@ -125,10 +142,10 @@
           <div class="react-counts" id="reactCounts"></div>
         </div>
         <div class="live-cmt-box">
-          <div class="live-cmt-title" data-i18n="live_comments">💬 Commentaires du Live</div>
+          <div class="live-cmt-title">💬 Commentaires du Live</div>
           <div class="live-cmt-list" id="liveCommentsList"><div class="live-cmt-empty">Les commentaires apparaîtront ici...</div></div>
           <div class="live-cmt-input-wrap">
-            <div id="liveCmtInputArea" style="display:none;flex:1;display:none;">
+            <div id="liveCmtInputArea" style="display:none;flex:1;">
               <div style="display:flex;gap:.5rem;width:100%;">
                 <input class="live-cmt-input" type="text" id="liveCmtInput" placeholder="Commente..." onkeydown="if(event.key==='Enter')sendLiveComment()"/>
                 <button class="live-cmt-send" onclick="sendLiveComment()">↑</button>
@@ -139,6 +156,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Prochains lives -->
     <div id="scheduleSection">
       <h3 style="font-family:'Playfair Display',serif;color:var(--gold);margin:2rem 0 1.2rem;font-size:1.2rem;">📅 Prochains Lives</h3>
       <div class="live-schedule">
@@ -149,58 +168,74 @@
     </div>
   </div>
 </div>
-<script src="components.js"></script><script src="auth.js"></script><script src="i18n.js"></script><script src="notifications.js"></script>
+
+<script src="components.js"></script><script src="auth.js"></script><script src="glory-api.js"></script><script src="i18n.js"></script><script src="notifications.js"></script>
 <script>
-let liveStream=null,audioCtx=null,animFrame=null,liveType='video',timerInt=null,viewerInt=null,startTime=null,viewerPingInt=null;
-let reactionCounts={'👍':0,'🧡':0,'🔥':0,'🙏':0,'❤️':0,'🎉':0},liveCmts=[];
+// ===== SOCKET.IO =====
+const socket = initSocket();
 
-function selectType(t){liveType=t;document.getElementById('btnTypeVideo').classList.toggle('sel',t==='video');document.getElementById('btnTypeAudio').classList.toggle('sel',t==='audio');}
+let liveStream=null,audioCtx=null,animFrame=null,liveType='video',timerInt=null,startTime=null;
+let reactionCounts={'👍':0,'🧡':0,'🔥':0,'🙏':0,'❤️':0,'🎉':0};
 
-async function startLive(){
+function selectType(t){
+  liveType=t;
+  document.getElementById('btnTypeVideo').classList.toggle('sel',t==='video');
+  document.getElementById('btnTypeAudio').classList.toggle('sel',t==='audio');
+}
+
+// ===== ADMIN : DÉMARRER LE LIVE =====
+async function doStartLive(){
   const title=document.getElementById('liveTitle').value.trim();
   if(!title){toast('⚠ Donne un titre à ton live.');return;}
-  try{
+  try {
+    await startLive(title, liveType); // glory-api.js
+
     liveStream=await navigator.mediaDevices.getUserMedia(liveType==='video'?{video:true,audio:true}:{audio:true,video:false});
+
     document.getElementById('liveSetup').style.display='none';
     document.getElementById('scheduleSection').style.display='none';
     document.getElementById('liveMain').classList.add('active');
     document.getElementById('btnStopLive').style.display='inline-block';
     document.getElementById('liveTitleHud').textContent=title;
-    if(liveType==='video'){const v=document.getElementById('liveVideo');v.srcObject=liveStream;v.style.display='block';document.getElementById('livePlaceholder').style.display='none';}
-    else{document.getElementById('livePlaceholder').style.display='flex';startAudioViz(liveStream);}
-    startTime=Date.now();timerInt=setInterval(updateTimer,1000);
-    localStorage.setItem('glory_live_active','1');localStorage.setItem('glory_live_title',title);localStorage.setItem('glory_live_viewers',JSON.stringify([]));
-    viewerInt=setInterval(()=>{
-      const viewers=JSON.parse(localStorage.getItem('glory_live_viewers')||'[]');
-      const now=Date.now();const active=viewers.filter(v=>(now-v.ts)<8000);
-      localStorage.setItem('glory_live_viewers',JSON.stringify(active));
-      document.getElementById('viewersCount').textContent=active.length;
-    },2000);
+
+    if(liveType==='video'){
+      const v=document.getElementById('liveVideo');v.srcObject=liveStream;v.style.display='block';
+      document.getElementById('livePlaceholder').style.display='none';
+    } else {
+      document.getElementById('livePlaceholder').style.display='flex';
+      startAudioViz(liveStream);
+    }
+
+    startTime=Date.now();
+    timerInt=setInterval(updateTimer,1000);
+
+    const user=GloryAuth.getUser();
+    if(user) socket.emit('join-live', user.email);
+
     updateLiveCmtUI();
-    createNotif('live','🔴 Live démarré : '+title,'Rejoins le live GLORY maintenant !','lives.html');
     toast('🔴 Live "'+title+'" démarré !');
-  }catch(e){toast('❌ Autorise l\'accès caméra/micro dans ton navigateur.');}
+  } catch(e) {
+    toast('❌ '+e.message);
+  }
 }
 
-function updateTimer(){if(!startTime)return;const el=Math.floor((Date.now()-startTime)/1000);const h=String(Math.floor(el/3600)).padStart(2,'0'),m=String(Math.floor((el%3600)/60)).padStart(2,'0'),s=String(el%60).padStart(2,'0');document.getElementById('timerDisplay').textContent=h+':'+m+':'+s;}
+// ===== ADMIN : ARRÊTER LE LIVE =====
+async function doStopLive(){
+  try { await stopLive(); } catch(e){} // glory-api.js
 
-function startAudioViz(stream){audioCtx=new(window.AudioContext||window.webkitAudioContext)();const src=audioCtx.createMediaStreamSource(stream),an=audioCtx.createAnalyser();an.fftSize=256;src.connect(an);const cv=document.getElementById('audioVisualizer');cv.style.display='block';const c=cv.getContext('2d'),buf=an.frequencyBinCount,d=new Uint8Array(buf);function resize(){cv.width=cv.offsetWidth||500;cv.height=90;}resize();window.addEventListener('resize',resize);function draw(){animFrame=requestAnimationFrame(draw);an.getByteFrequencyData(d);c.clearRect(0,0,cv.width,cv.height);c.fillStyle='rgba(10,8,0,.8)';c.fillRect(0,0,cv.width,cv.height);const bw=(cv.width/buf)*2.2;for(let i=0;i<buf;i++){const bh=(d[i]/255)*cv.height;c.fillStyle=`hsl(${42+d[i]/255*18},85%,${38+d[i]/255*28}%)`;c.fillRect(i*bw*1.1,cv.height-bh,bw,bh);}}draw();}
-
-function sendReaction(emoji){const user=getSession();if(!user){openModal('login');return;}reactionCounts[emoji]=(reactionCounts[emoji]||0)+1;updateReactCounts();spawnEmoji(emoji);}
-function spawnEmoji(emoji){const c=document.getElementById('reactionsFloat'),el=document.createElement('div');el.className='float-emoji';el.textContent=emoji;const dx=(Math.random()-.5)*60+'px';el.style.cssText=`left:${10+Math.random()*80}%;--dx:${dx}`;c.appendChild(el);setTimeout(()=>el.remove(),3100);}
-function updateReactCounts(){document.getElementById('reactCounts').innerHTML=Object.entries(reactionCounts).filter(([,v])=>v>0).map(([k,v])=>`<div class="rc">${k} <strong style="color:var(--white)">${v}</strong></div>`).join('');}
-
-function sendLiveComment(){const user=getSession();if(!user)return;const input=document.getElementById('liveCmtInput');const text=input.value.trim();if(!text)return;liveCmts.push({name:user.name,role:user.role,text,time:new Date().toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})});input.value='';renderLiveCmts();}
-function renderLiveCmts(){const list=document.getElementById('liveCommentsList');if(liveCmts.length===0){list.innerHTML='<div class="live-cmt-empty">Les commentaires apparaîtront ici...</div>';return;}list.innerHTML='';liveCmts.forEach(c=>{const ini=c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();const d=document.createElement('div');d.className='live-cmt';d.innerHTML=`<div class="live-cmt-av ${c.role==='admin'?'adm':''}">${ini}</div><div class="live-cmt-body"><div class="live-cmt-name">${c.role==='admin'?'✦ ':''}${c.name}</div><div class="live-cmt-text">${c.text}</div></div>`;list.appendChild(d);});list.scrollTop=list.scrollHeight;}
-function updateLiveCmtUI(){const user=getSession();const ia=document.getElementById('liveCmtInputArea'),g=document.getElementById('liveCmtGuest');if(user){if(ia){ia.style.display='flex';}if(g)g.style.display='none';}else{if(ia)ia.style.display='none';if(g)g.style.display='block';}}
-
-function stopLive(){
   if(liveStream){liveStream.getTracks().forEach(t=>t.stop());liveStream=null;}
-  if(audioCtx){audioCtx.close();audioCtx=null;}if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}
-  if(timerInt){clearInterval(timerInt);timerInt=null;}if(viewerInt){clearInterval(viewerInt);viewerInt=null;}
-  localStorage.removeItem('glory_live_active');localStorage.removeItem('glory_live_viewers');localStorage.removeItem('glory_live_title');
-  startTime=null;liveCmts=[];reactionCounts={'👍':0,'🧡':0,'🔥':0,'🙏':0,'❤️':0,'🎉':0};
-  document.getElementById('liveVideo').style.display='none';document.getElementById('liveVideo').srcObject=null;
+  if(audioCtx){audioCtx.close();audioCtx=null;}
+  if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}
+  if(timerInt){clearInterval(timerInt);timerInt=null;}
+
+  const user=GloryAuth.getUser();
+  if(user) socket.emit('leave-live', user.email);
+
+  startTime=null;
+  reactionCounts={'👍':0,'🧡':0,'🔥':0,'🙏':0,'❤️':0,'🎉':0};
+
+  document.getElementById('liveVideo').style.display='none';
+  document.getElementById('liveVideo').srcObject=null;
   document.getElementById('livePlaceholder').style.display='flex';
   document.getElementById('audioVisualizer').style.display='none';
   document.getElementById('liveMain').classList.remove('active');
@@ -215,17 +250,141 @@ function stopLive(){
   toast('⏹ Live arrêté.');
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  const user=getSession();
-  if(user&&user.role==='admin')document.getElementById('liveSetup').style.display='block';
+function updateTimer(){
+  if(!startTime)return;
+  const el=Math.floor((Date.now()-startTime)/1000);
+  const h=String(Math.floor(el/3600)).padStart(2,'0'),m=String(Math.floor((el%3600)/60)).padStart(2,'0'),s=String(el%60).padStart(2,'0');
+  document.getElementById('timerDisplay').textContent=h+':'+m+':'+s;
+}
+
+function startAudioViz(stream){
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  const src=audioCtx.createMediaStreamSource(stream),an=audioCtx.createAnalyser();
+  an.fftSize=256;src.connect(an);
+  const cv=document.getElementById('audioVisualizer');cv.style.display='block';
+  const c=cv.getContext('2d'),buf=an.frequencyBinCount,d=new Uint8Array(buf);
+  function resize(){cv.width=cv.offsetWidth||500;cv.height=90;}resize();
+  window.addEventListener('resize',resize);
+  function draw(){
+    animFrame=requestAnimationFrame(draw);an.getByteFrequencyData(d);
+    c.clearRect(0,0,cv.width,cv.height);c.fillStyle='rgba(10,8,0,.8)';c.fillRect(0,0,cv.width,cv.height);
+    const bw=(cv.width/buf)*2.2;
+    for(let i=0;i<buf;i++){const bh=(d[i]/255)*cv.height;c.fillStyle=`hsl(${42+d[i]/255*18},85%,${38+d[i]/255*28}%)`;c.fillRect(i*bw*1.1,cv.height-bh,bw,bh);}
+  }draw();
+}
+
+// ===== RÉACTIONS =====
+function sendReaction(emoji){
+  const user=GloryAuth.getUser();if(!user){openModal('login');return;}
+  socket.emit('live-reaction',{emoji, name:user.name});
+  spawnEmoji(emoji);
+}
+function spawnEmoji(emoji){
+  const c=document.getElementById('reactionsFloat'),el=document.createElement('div');
+  el.className='float-emoji';el.textContent=emoji;
+  const dx=(Math.random()-.5)*60+'px';
+  el.style.cssText=`left:${10+Math.random()*80}%;--dx:${dx}`;
+  c.appendChild(el);setTimeout(()=>el.remove(),3100);
+}
+function updateReactCounts(){
+  document.getElementById('reactCounts').innerHTML=Object.entries(reactionCounts).filter(([,v])=>v>0).map(([k,v])=>`<div class="rc">${k} <strong style="color:var(--white)">${v}</strong></div>`).join('');
+}
+
+// ===== COMMENTAIRES =====
+function sendLiveComment(){
+  const user=GloryAuth.getUser();if(!user)return;
+  const input=document.getElementById('liveCmtInput');
+  const text=input.value.trim();if(!text)return;
+  socket.emit('live-comment',{name:user.name,role:user.role,text,time:new Date().toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})});
+  input.value='';
+}
+
+function addComment(c){
+  const list=document.getElementById('liveCommentsList');
+  const empty=list.querySelector('.live-cmt-empty');if(empty)empty.remove();
+  const ini=c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const d=document.createElement('div');d.className='live-cmt';
+  d.innerHTML=`<div class="live-cmt-av ${c.role==='admin'?'adm':''}">${ini}</div><div class="live-cmt-body"><div class="live-cmt-name">${c.role==='admin'?'✦ ':''}${c.name}</div><div class="live-cmt-text">${c.text}</div></div>`;
+  list.appendChild(d);list.scrollTop=list.scrollHeight;
+}
+
+function updateLiveCmtUI(){
+  const user=GloryAuth.getUser();
+  const ia=document.getElementById('liveCmtInputArea'),g=document.getElementById('liveCmtGuest');
+  if(user){ia.style.display='flex';if(g)g.style.display='none';}
+  else{ia.style.display='none';if(g)g.style.display='block';}
+}
+
+// ===== SOCKET EVENTS =====
+socket.on('viewers-count', count => {
+  document.getElementById('viewersCount').textContent=count;
+  document.getElementById('viewerCountBanner').textContent=count;
+});
+
+socket.on('live-reaction', data => {
+  reactionCounts[data.emoji]=(reactionCounts[data.emoji]||0)+1;
+  updateReactCounts();
+  spawnEmoji(data.emoji);
+});
+
+socket.on('live-comment', data => {
+  addComment(data);
+});
+
+// Quand un live démarre (pour les spectateurs)
+socket.on('live-started', live => {
+  document.getElementById('viewerBanner').classList.add('show');
+  document.getElementById('viewerLiveTitle').textContent=live.title;
+  document.getElementById('liveMain').classList.add('active');
+  document.getElementById('liveTitleHud').textContent=live.title;
+  document.getElementById('scheduleSection').style.display='none';
   updateLiveCmtUI();
-  // Spectateurs non-admin
-  if(user&&user.role!=='admin'&&localStorage.getItem('glory_live_active')){
-    function ping(){const viewers=JSON.parse(localStorage.getItem('glory_live_viewers')||'[]');const i=viewers.findIndex(v=>v.name===user.name);if(i!==-1)viewers[i].ts=Date.now();else viewers.push({name:user.name,ts:Date.now()});localStorage.setItem('glory_live_viewers',JSON.stringify(viewers));}
-    ping();viewerPingInt=setInterval(ping,5000);
-    window.addEventListener('beforeunload',()=>{clearInterval(viewerPingInt);const viewers=JSON.parse(localStorage.getItem('glory_live_viewers')||'[]').filter(v=>v.name!==user.name);localStorage.setItem('glory_live_viewers',JSON.stringify(viewers));});
-    document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInterval(viewerPingInt);const viewers=JSON.parse(localStorage.getItem('glory_live_viewers')||'[]').filter(v=>v.name!==user.name);localStorage.setItem('glory_live_viewers',JSON.stringify(viewers));}else{ping();viewerPingInt=setInterval(ping,5000);}});
+  // Rejoindre le live
+  const user=getSession();
+  if(user) socket.emit('join-live', user.email);
+  toast('🔴 Live démarré : '+live.title);
+});
+
+// Quand le live s'arrête (pour les spectateurs)
+socket.on('live-stopped', () => {
+  document.getElementById('viewerBanner').classList.remove('show');
+  document.getElementById('liveMain').classList.remove('active');
+  document.getElementById('scheduleSection').style.display='block';
+  document.getElementById('liveCommentsList').innerHTML='<div class="live-cmt-empty">Les commentaires apparaîtront ici...</div>';
+  document.getElementById('reactCounts').innerHTML='';
+  reactionCounts={'👍':0,'🧡':0,'🔥':0,'🙏':0,'❤️':0,'🎉':0};
+  toast('⏹ Le live est terminé.');
+});
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', async () => {
+  const user=GloryAuth.getUser();
+  const isAdmin=GloryAuth.isAdmin();
+
+  if(isAdmin) document.getElementById('liveSetup').style.display='block';
+  updateLiveCmtUI();
+
+  // Vérifier si un live est déjà en cours
+  if(GloryAuth.isLoggedIn()){
+    try {
+      const live=await getLiveStatus();
+      if(live){
+        document.getElementById('viewerBanner').classList.add('show');
+        document.getElementById('viewerLiveTitle').textContent=live.title;
+        if(!isAdmin){
+          document.getElementById('liveMain').classList.add('active');
+          document.getElementById('liveTitleHud').textContent=live.title;
+          document.getElementById('scheduleSection').style.display='none';
+          socket.emit('join-live', user?.email||'anonymous');
+        }
+      }
+    } catch(e){}
   }
+});
+
+window.addEventListener('beforeunload',()=>{
+  const user=GloryAuth.getUser();
+  if(user) socket.emit('leave-live', user.email);
 });
 </script>
 </body></html>
