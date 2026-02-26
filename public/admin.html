@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>GLORY – Admin</title>
+  <link rel="stylesheet" href="style.css"/><link rel="manifest" href="manifest.json"/>
+  <style>
+    .admin-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:2rem;border-bottom:1px solid rgba(212,175,55,.15);padding-bottom:1rem;}
+    .admin-tab{background:none;border:1px solid rgba(212,175,55,.2);color:var(--text-muted);padding:.5rem 1.1rem;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .3s;}
+    .admin-tab.active{background:var(--gold);color:var(--bg-dark);font-weight:700;border-color:var(--gold);}
+    .admin-tab:hover:not(.active){border-color:var(--gold);color:var(--gold);}
+    .tab-panel{display:none;} .tab-panel.active{display:block;}
+    .admin-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:1rem;margin-bottom:2.5rem;}
+    .stat-box{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);padding:1rem;text-align:center;border-radius:8px;}
+    .stat-num{font-size:1.8rem;color:var(--gold);font-weight:700;}
+    .stat-label{color:var(--text-muted);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;margin-top:.2rem;}
+    .admin-section{background:rgba(255,255,255,.02);border:1px solid rgba(212,175,55,.12);padding:2rem;border-radius:8px;margin-bottom:1.5rem;}
+    .admin-section h3{font-family:'Cinzel Decorative',cursive;color:var(--gold);font-size:.95rem;margin-bottom:1.2rem;}
+    .tbl-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:500px;}
+    th{color:var(--gold);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;padding:.6rem .8rem;border-bottom:1px solid rgba(212,175,55,.18);text-align:left;white-space:nowrap;}
+    td{color:var(--text-muted);padding:.6rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle;}
+    .badge-admin{background:rgba(255,152,0,.15);border:1px solid rgba(255,152,0,.3);color:#ff9800;font-size:.62rem;letter-spacing:1px;padding:.15rem .5rem;border-radius:3px;text-transform:uppercase;}
+    .badge-suspended{background:rgba(229,62,62,.12);border:1px solid rgba(229,62,62,.3);color:#fc8181;font-size:.62rem;padding:.15rem .5rem;border-radius:3px;}
+    .badge-active{background:rgba(72,187,120,.1);border:1px solid rgba(72,187,120,.25);color:#68d391;font-size:.62rem;padding:.15rem .5rem;border-radius:3px;}
+    .action-btns{display:flex;gap:.4rem;flex-wrap:wrap;}
+    .btn-sm{padding:.25rem .6rem;border-radius:3px;font-size:.7rem;cursor:pointer;transition:all .2s;white-space:nowrap;border:1px solid;background:none;}
+    .btn-promote{border-color:rgba(255,152,0,.4);color:#ff9800;} .btn-promote:hover{background:#ff9800;color:#000;}
+    .btn-demote{border-color:rgba(184,168,122,.3);color:var(--text-muted);} .btn-demote:hover{background:rgba(184,168,122,.2);}
+    .btn-suspend{border-color:rgba(229,62,62,.4);color:#fc8181;} .btn-suspend:hover{background:#e53e3e;color:#fff;}
+    .btn-restore{border-color:rgba(72,187,120,.4);color:#68d391;} .btn-restore:hover{background:#48bb78;color:#000;}
+    .btn-delete{border-color:rgba(229,62,62,.25);color:rgba(229,62,62,.6);} .btn-delete:hover{background:#e53e3e;color:#fff;}
+    /* Suspension modal */
+    .susp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+    .susp-overlay.open{display:flex;}
+    .susp-modal{background:var(--bg-mid);border:1px solid rgba(229,62,62,.35);width:90%;max-width:420px;padding:2rem;border-radius:8px;position:relative;animation:modalIn .3s ease;}
+    @keyframes modalIn{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+    .susp-modal h3{font-family:'Cinzel Decorative',cursive;color:#fc8181;font-size:.95rem;margin-bottom:1.5rem;text-align:center;}
+    .susp-options{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.2rem;}
+    .susp-opt{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;background:rgba(255,255,255,.02);border:1px solid rgba(229,62,62,.15);border-radius:6px;cursor:pointer;transition:all .3s;}
+    .susp-opt:hover,.susp-opt.sel{background:rgba(229,62,62,.1);border-color:rgba(229,62,62,.4);}
+    .susp-opt input[type=radio]{accent-color:#e53e3e;}
+    .susp-opt label{cursor:pointer;font-size:.85rem;color:var(--white);}
+    .custom-date-wrap{display:none;}
+    .notif-form{background:rgba(255,152,0,.04);border:1px solid rgba(255,152,0,.2);border-radius:8px;padding:1.5rem;}
+    .notif-form h3{color:#ff9800;}
+    .no-access{text-align:center;padding:5rem 2rem;}
+    @media(max-width:600px){.admin-tabs{gap:.3rem;}.admin-tab{font-size:.68rem;padding:.4rem .7rem;}}
+  </style>
+</head>
+<body>
+<div class="page-content">
+  <div class="section-wrap" style="max-width:1000px;margin:0 auto;">
+    <div id="noAccess" style="display:none;text-align:center;padding:5rem 2rem;">
+      <div style="font-size:3rem;margin-bottom:1rem;">🔒</div>
+      <p style="font-size:1.1rem;color:var(--white);margin-bottom:.5rem;">Accès réservé à l'administrateur</p>
+      <p style="color:var(--text-muted);">Connecte-toi avec admin@glory.com</p>
+    </div>
+    <div id="adminContent" style="display:none;">
+      <div class="section-header">
+        <span class="section-tag">✦ Administration ✦</span>
+        <h2 class="section-title">Panneau Admin</h2>
+        <div class="section-line"></div>
+      </div>
+      <!-- Stats -->
+      <div class="admin-stats">
+        <div class="stat-box"><div class="stat-num" id="sM">0</div><div class="stat-label">Membres</div></div>
+        <div class="stat-box"><div class="stat-num" id="sA">0</div><div class="stat-label">Admins</div></div>
+        <div class="stat-box"><div class="stat-num" id="sP">0</div><div class="stat-label">Posts</div></div>
+        <div class="stat-box"><div class="stat-num" id="sMg">0</div><div class="stat-label">Messages</div></div>
+        <div class="stat-box"><div class="stat-num" id="sE">0</div><div class="stat-label">Événements</div></div>
+        <div class="stat-box"><div class="stat-num" id="sPo">0</div><div class="stat-label">Sondages</div></div>
+        <div class="stat-box"><div class="stat-num" id="sSu">0</div><div class="stat-label">Suspendus</div></div>
+      </div>
+      <!-- Onglets -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="showTab('membres')">👥 Membres</button>
+        <button class="admin-tab" onclick="showTab('admins')">⭐ Admins</button>
+        <button class="admin-tab" onclick="showTab('notifs')">🔔 Notifications</button>
+        <button class="admin-tab" onclick="showTab('posts')">📝 Posts</button>
+        <button class="admin-tab" onclick="showTab('messages')">💬 Messages</button>
+      </div>
+
+      <!-- MEMBRES -->
+      <div class="tab-panel active" id="tab-membres">
+        <div class="admin-section">
+          <h3>👥 Gestion des Membres</h3>
+          <div class="tbl-wrap" id="membersWrap"></div>
+        </div>
+      </div>
+
+      <!-- ADMINS -->
+      <div class="tab-panel" id="tab-admins">
+        <div class="admin-section">
+          <h3>⭐ Admins Assistants</h3>
+          <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;line-height:1.7;">Les admins assistants peuvent publier des posts, gérer les messages et créer des événements. Seul toi (admin principal) peux les promouvoir ou les rétrograder.</p>
+          <!-- Ajouter admin -->
+          <div style="background:rgba(255,152,0,.04);border:1px solid rgba(255,152,0,.2);border-radius:8px;padding:1.5rem;margin-bottom:1.5rem;">
+            <h3 style="color:#ff9800;margin-bottom:1rem;">➕ Ajouter un Admin Assistant</h3>
+            <div class="form-group"><label>Choisir un membre</label>
+              <select id="adminCandidateSelect"><option value="">— Sélectionner un membre —</option></select>
+            </div>
+            <button class="btn-submit" style="margin-top:.5rem;" onclick="promoteToAdmin()">⭐ Promouvoir comme Admin</button>
+          </div>
+          <div class="tbl-wrap" id="adminsWrap"></div>
+        </div>
+      </div>
+
+      <!-- NOTIFS -->
+      <div class="tab-panel" id="tab-notifs">
+        <div class="admin-section">
+          <div class="notif-form">
+            <h3>🔔 Envoyer une Notification à tous</h3>
+            <div class="form-group"><label>Titre</label><input type="text" id="nTitle" placeholder="Ex: Message important de GLORY..."/></div>
+            <div class="form-group"><label>Message</label><input type="text" id="nMsg" placeholder="Contenu de la notification..."/></div>
+            <div class="form-group"><label>Type</label>
+              <select id="nType"><option value="post">📝 Post</option><option value="live">🔴 Live</option><option value="event">📅 Événement</option><option value="message">💬 Message</option></select>
+            </div>
+            <button class="btn-submit" style="margin-top:.5rem;" onclick="sendAdminNotif()">Envoyer à tous ✦</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTS -->
+      <div class="tab-panel" id="tab-posts">
+        <div class="admin-section">
+          <h3>📝 Publications</h3>
+          <div class="tbl-wrap" id="postsWrap"></div>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="tab-panel" id="tab-messages">
+        <div class="admin-section">
+          <h3>💬 Derniers Messages</h3>
+          <div class="tbl-wrap" id="msgsWrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Suspension -->
+<div class="susp-overlay" id="suspOverlay">
+  <div class="susp-modal">
+    <button style="position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;" onclick="closeSuspModal()">×</button>
+    <h3>🚫 Suspendre le compte</h3>
+    <p style="color:var(--text-muted);font-size:.83rem;margin-bottom:1.2rem;text-align:center;" id="suspTarget"></p>
+    <div class="susp-options">
+      <div class="susp-opt sel" onclick="selSuspDur(this,'3j')"><input type="radio" name="sd" checked/><label>3 jours</label></div>
+      <div class="susp-opt" onclick="selSuspDur(this,'7j')"><input type="radio" name="sd"/><label>7 jours</label></div>
+      <div class="susp-opt" onclick="selSuspDur(this,'1m')"><input type="radio" name="sd"/><label>1 mois</label></div>
+      <div class="susp-opt" onclick="selSuspDur(this,'3m')"><input type="radio" name="sd"/><label>3 mois</label></div>
+      <div class="susp-opt" onclick="selSuspDur(this,'indef')"><input type="radio" name="sd"/><label>Indéfini</label></div>
+      <div class="susp-opt" onclick="selSuspDur(this,'custom')"><input type="radio" name="sd"/><label>Date personnalisée</label></div>
+    </div>
+    <div class="custom-date-wrap form-group" id="customDateWrap">
+      <label>Restaurer le :</label>
+      <input type="date" id="suspCustomDate"/>
+    </div>
+    <div class="form-group"><label>Motif (optionnel)</label><input type="text" id="suspReason" placeholder="Ex: Non-respect des règles..."/></div>
+    <button class="btn-submit" style="background:linear-gradient(135deg,#c53030,#e53e3e);" onclick="confirmSuspend()">Confirmer la Suspension</button>
+  </div>
+</div>
+
+<script src="components.js"></script><script src="auth.js"></script><script src="i18n.js"></script><script src="notifications.js"></script>
+<script>
+let suspEmail = '', suspDuration = '3j';
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(name==='membres') renderMembers();
+  if(name==='admins')  renderAdmins();
+  if(name==='posts')   renderPosts();
+  if(name==='messages') renderMessages();
+}
+
+function loadStats() {
+  const users=getUsers(),posts=getPosts(),msgs=getMsgs();
+  const events=JSON.parse(localStorage.getItem('glory_events')||'[]');
+  const polls=JSON.parse(localStorage.getItem('glory_polls')||'[]');
+  const subAdmins=getSubAdmins();
+  const suspended=users.filter(u=>u.suspended).length;
+  document.getElementById('sM').textContent=users.length;
+  document.getElementById('sA').textContent=subAdmins.length;
+  document.getElementById('sP').textContent=posts.length;
+  document.getElementById('sMg').textContent=msgs.length;
+  document.getElementById('sE').textContent=events.length;
+  document.getElementById('sPo').textContent=polls.length;
+  document.getElementById('sSu').textContent=suspended;
+}
+
+function renderMembers() {
+  const users=getUsers(),subAdmins=getSubAdmins();
+  const wrap=document.getElementById('membersWrap');
+  if(users.length===0){wrap.innerHTML='<p style="color:rgba(184,168,122,.4);padding:1rem 0;">Aucun membre inscrit.</p>';return;}
+  // Check auto-restore
+  let changed=false;
+  const now=new Date();
+  users.forEach(u=>{if(u.suspended&&u.restoreDate){const rd=new Date(u.restoreDate);if(now>=rd){u.suspended=false;u.restoreDate=null;u.suspendedReason=null;changed=true;}}});
+  if(changed)saveUsers(users);
+
+  wrap.innerHTML=`<table><thead><tr><th>Nom</th><th>Email</th><th>Pays</th><th>Inscrit</th><th>Statut</th><th>Actions</th></tr></thead><tbody>
+  ${users.map(u=>{
+    const isSA=subAdmins.includes(u.email);
+    const status=u.suspended
+      ?`<span class="badge-suspended">Suspendu${u.restoreDate?' — restauration '+new Date(u.restoreDate).toLocaleDateString('fr'):' — indéfini'}</span>`
+      :(isSA?`<span class="badge-admin">Admin</span>`:`<span class="badge-active">Actif</span>`);
+    const actions=`<div class="action-btns">
+      ${!u.suspended?`<button class="btn-sm btn-suspend" onclick="openSuspModal('${u.email}','${u.name}')">Suspendre</button>`
+        :`<button class="btn-sm btn-restore" onclick="restoreAccount('${u.email}')">Restaurer</button>`}
+      <button class="btn-sm btn-delete" onclick="deleteMember('${u.email}')">Supprimer</button>
+    </div>`;
+    return`<tr><td style="color:var(--white);font-weight:600;">${u.name}</td><td>${u.email}</td><td>${u.country||'—'}</td><td>${u.joined||'—'}</td><td>${status}</td><td>${actions}</td></tr>`;
+  }).join('')}
+  </tbody></table>`;
+  loadStats();
+}
+
+function renderAdmins() {
+  const subAdmins=getSubAdmins(),users=getUsers();
+  // Remplir le select
+  const sel=document.getElementById('adminCandidateSelect');
+  sel.innerHTML='<option value="">— Sélectionner un membre —</option>';
+  users.filter(u=>!subAdmins.includes(u.email)).forEach(u=>{sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;});
+
+  const wrap=document.getElementById('adminsWrap');
+  const admins=users.filter(u=>subAdmins.includes(u.email));
+  if(admins.length===0){wrap.innerHTML='<p style="color:rgba(184,168,122,.4);padding:1rem 0;">Aucun admin assistant pour le moment.</p>';return;}
+  wrap.innerHTML=`<table><thead><tr><th>Nom</th><th>Email</th><th>Pays</th><th>Promu le</th><th>Action</th></tr></thead><tbody>
+  ${admins.map(u=>`<tr>
+    <td style="color:var(--white);font-weight:600;">${u.name} <span class="badge-admin" style="margin-left:.4rem;">Admin</span></td>
+    <td>${u.email}</td><td>${u.country||'—'}</td><td>${u.promotedDate||'—'}</td>
+    <td><button class="btn-sm btn-demote" onclick="demoteAdmin('${u.email}')">Rétrograder</button></td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function promoteToAdmin() {
+  const email=document.getElementById('adminCandidateSelect').value;
+  if(!email){toast('Sélectionne un membre.');return;}
+  const subAdmins=getSubAdmins();
+  if(subAdmins.includes(email)){toast('Déjà admin.');return;}
+  subAdmins.push(email);saveSubAdmins(subAdmins);
+  // Marquer la date
+  const users=getUsers();const u=users.find(x=>x.email===email);if(u){u.promotedDate=new Date().toLocaleDateString('fr');saveUsers(users);}
+  toast('✅ Admin assistant ajouté !');renderAdmins();loadStats();
+}
+
+function demoteAdmin(email) {
+  if(!confirm('Rétrograder cet admin ?'))return;
+  saveSubAdmins(getSubAdmins().filter(e=>e!==email));
+  toast('Membre rétrogradé.');renderAdmins();loadStats();
+}
+
+// SUSPENSION
+function openSuspModal(email, name) {
+  suspEmail=email;
+  document.getElementById('suspTarget').textContent='Compte : '+name+' ('+email+')';
+  document.getElementById('suspReason').value='';
+  document.getElementById('suspCustomDate').value='';
+  selSuspDur(document.querySelector('.susp-opt'),document.querySelector('.susp-opt'),'3j');
+  document.querySelectorAll('.susp-opt').forEach((o,i)=>{o.classList.remove('sel');o.querySelector('input').checked=false;});
+  document.querySelector('.susp-opt').classList.add('sel');
+  document.querySelector('.susp-opt input').checked=true;
+  suspDuration='3j';
+  document.getElementById('suspOverlay').classList.add('open');
+}
+function closeSuspModal(){document.getElementById('suspOverlay').classList.remove('open');}
+function selSuspDur(el,dur){
+  document.querySelectorAll('.susp-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');el.querySelector('input').checked=true;
+  suspDuration=dur;
+  document.getElementById('customDateWrap').style.display=dur==='custom'?'block':'none';
+}
+
+function confirmSuspend() {
+  if(!suspEmail)return;
+  const users=getUsers();const u=users.find(x=>x.email===suspEmail);if(!u)return;
+  u.suspended=true;
+  const reason=document.getElementById('suspReason').value.trim();
+  if(reason)u.suspendedReason=reason;
+  if(suspDuration==='indef'){u.restoreDate=null;}
+  else if(suspDuration==='custom'){
+    const d=document.getElementById('suspCustomDate').value;
+    if(!d){toast('Sélectionne une date.');return;}
+    u.restoreDate=d;
+  } else {
+    const days={'3j':3,'7j':7,'1m':30,'3m':90}[suspDuration]||3;
+    const restore=new Date();restore.setDate(restore.getDate()+days);
+    u.restoreDate=restore.toISOString().split('T')[0];
+  }
+  saveUsers(users);closeSuspModal();
+  const dateMsg=u.restoreDate?'Restauration : '+new Date(u.restoreDate).toLocaleDateString('fr'):'Suspension indéfinie';
+  toast(`🚫 ${u.name} suspendu. ${dateMsg}`);
+  renderMembers();
+}
+
+function restoreAccount(email) {
+  const users=getUsers();const u=users.find(x=>x.email===email);if(!u)return;
+  u.suspended=false;u.restoreDate=null;u.suspendedReason=null;
+  saveUsers(users);toast('✅ Compte restauré !');renderMembers();
+}
+function deleteMember(email){if(!confirm('Supprimer définitivement ce membre ?'))return;saveUsers(getUsers().filter(u=>u.email!==email));renderMembers();toast('Membre supprimé.');}
+
+function renderPosts() {
+  const posts=getPosts(),wrap=document.getElementById('postsWrap');
+  if(posts.length===0){wrap.innerHTML='<p style="color:rgba(184,168,122,.4);padding:1rem 0;">Aucun post.</p>';return;}
+  wrap.innerHTML=`<table><thead><tr><th>Titre</th><th>Type</th><th>Likes</th><th>Commentaires</th><th>Date</th><th></th></tr></thead><tbody>
+  ${posts.map(p=>`<tr><td style="color:var(--white);">${p.title||'(sans titre)'}</td><td>${p.type}</td><td>${(p.likes||[]).length}</td><td>${(p.comments||[]).length}</td><td>${p.date}</td>
+  <td><button class="btn-sm btn-delete" onclick="deletePost(${p.id})">Supprimer</button></td></tr>`).join('')}
+  </tbody></table>`;
+}
+function deletePost(id){if(!confirm('Supprimer ce post ?'))return;savePosts(getPosts().filter(p=>p.id!==id));renderPosts();loadStats();toast('Post supprimé.');}
+
+function renderMessages() {
+  const msgs=[...getMsgs()].reverse().slice(0,20),wrap=document.getElementById('msgsWrap');
+  if(msgs.length===0){wrap.innerHTML='<p style="color:rgba(184,168,122,.4);padding:1rem 0;">Aucun message.</p>';return;}
+  wrap.innerHTML=`<table><thead><tr><th>Membre</th><th>Message</th><th>Canal</th><th>Heure</th></tr></thead><tbody>
+  ${msgs.map(m=>`<tr><td style="color:${m.role==='admin'?'#ff9800':'var(--white)'};">${m.name}</td>
+  <td>${(m.text||'🎙 Vocal').substring(0,60)}</td><td>${m.conv||'general'}</td><td>${m.time}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+function sendAdminNotif(){
+  const title=document.getElementById('nTitle').value.trim(),msg=document.getElementById('nMsg').value.trim(),type=document.getElementById('nType').value;
+  if(!title||!msg){toast('Titre et message requis.');return;}
+  createNotif(type,title,msg,'index.html');
+  document.getElementById('nTitle').value='';document.getElementById('nMsg').value='';
+  toast('✅ Notification envoyée !');
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const user=getSession();
+  if(!user||user.role!=='admin'){document.getElementById('noAccess').style.display='block';return;}
+  document.getElementById('adminContent').style.display='block';
+  loadStats();renderMembers();
+});
+</script>
+</body></html>

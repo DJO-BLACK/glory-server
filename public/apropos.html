@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>GLORY – À Propos</title>
+  <link rel="stylesheet" href="style.css"/><link rel="manifest" href="manifest.json"/>
+  <style>
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+    .about-img-wrap{position:relative;}
+    .about-img{width:100%;border-radius:8px;border:1px solid rgba(212,175,55,.3);opacity:.85;}
+    .about-frame{position:absolute;inset:-12px;border:1px solid rgba(212,175,55,.18);pointer-events:none;border-radius:10px;}
+    .about-text h3{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin-bottom:1rem;}
+    .about-text p{color:var(--text-muted);line-height:1.9;margin-bottom:1rem;}
+    .verse{font-family:'Playfair Display',serif;font-style:italic;color:var(--gold-light);border-left:3px solid var(--gold);padding-left:1rem;margin-top:1.5rem;line-height:1.8;}
+    .values-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem;margin-top:4rem;}
+    .value-card{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.15);padding:1.8rem;border-radius:8px;text-align:center;transition:all .3s;}
+    .value-card:hover{background:rgba(212,175,55,.08);transform:translateY(-3px);}
+    .value-icon{font-size:2rem;margin-bottom:.8rem;}
+    .value-card h4{font-family:'Playfair Display',serif;color:var(--gold);margin-bottom:.5rem;}
+    .value-card p{color:var(--text-muted);font-size:.85rem;line-height:1.7;}
+    @media(max-width:768px){.about-grid{grid-template-columns:1fr;gap:2rem;}}
+  </style>
+</head>
+<body>
+<div class="page-content">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-tag" data-i18n="about_tag">✦ Notre Mission ✦</span>
+      <h2 class="section-title" data-i18n="about_title">À Propos de GLORY</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-img-wrap">
+        <img class="about-img" src="https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?w=700&q=80" alt="Communauté GLORY"/>
+        <div class="about-frame"></div>
+      </div>
+      <div class="about-text">
+        <h3>Réunis par Sa Gloire</h3>
+        <p>GLORY est une communauté mondiale née avec une seule vision : rassembler la jeunesse du monde entier pour adorer et parler du seul vrai DIEU, peu importe ta dénomination, ta langue ou ton pays.</p>
+        <p>Ici tu trouveras des messages inspirants, des études bibliques, des prières, des lives worship, et une famille spirituelle prête à t'accueillir bras ouverts.</p>
+        <p>Nous croyons que la vraie adoration transcende les frontières religieuses et culturelles. Ensemble, nous avançons dans la foi, l'amour et la vérité.</p>
+        <div class="verse">"Car là où deux ou trois sont assemblés en mon nom, je suis au milieu d'eux." — Matthieu 18:20</div>
+      </div>
+    </div>
+    <div class="section-header" style="margin-top:5rem;">
+      <span class="section-tag">✦ Nos Valeurs ✦</span>
+      <h2 class="section-title">Ce en quoi nous croyons</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-icon">✞</div><h4>Foi</h4><p>Nous plaçons notre confiance totale en Dieu, en Sa Parole et en Ses promesses immuables.</p></div>
+      <div class="value-card"><div class="value-icon">🙏</div><h4>Prière</h4><p>La prière est notre respiration. Nous intercédons ensemble pour la communauté et le monde.</p></div>
+      <div class="value-card"><div class="value-icon">💛</div><h4>Amour</h4><p>Nous accueillons chaque personne sans jugement, avec l'amour inconditionnel de Dieu.</p></div>
+      <div class="value-card"><div class="value-icon">🌍</div><h4>Unité</h4><p>Toutes dénominations confondues, nous sommes UN dans Christ — unis au-delà des frontières.</p></div>
+    </div>
+  </div>
+</div>
+<script src="components.js"></script><script src="auth.js"></script><script src="i18n.js"></script><script src="notifications.js"></script>
+</body></html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GLORY – Mon Profil</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <style>
+    .profil-wrap { max-width:860px; margin:0 auto; }
+
+    /* HEADER PROFIL */
+    .profil-header { background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(10,8,0,0)); border:1px solid rgba(212,175,55,0.18); border-radius:12px; padding:2.5rem; display:flex; gap:2rem; align-items:center; margin-bottom:2rem; }
+    .profil-avatar-wrap { position:relative; flex-shrink:0; }
+    .profil-avatar { width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid var(--gold); background:linear-gradient(135deg,var(--gold-dark),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:700; color:var(--bg-dark); overflow:hidden; }
+    .profil-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .avatar-edit-btn { position:absolute; bottom:4px; right:4px; background:var(--gold); border:none; width:28px; height:28px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.8rem; transition:all .2s; }
+    .avatar-edit-btn:hover { background:var(--gold-light); transform:scale(1.1); }
+    #avatarInput { display:none; }
+
+    .profil-info { flex:1; }
+    .profil-name { font-family:'Cinzel Decorative',cursive; font-size:1.6rem; color:var(--gold); margin-bottom:.3rem; }
+    .profil-role { font-size:.72rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:.6rem; }
+    .profil-country { color:var(--text-muted); font-size:.88rem; margin-bottom:.4rem; }
+    .profil-joined { color:rgba(184,168,122,0.5); font-size:.78rem; }
+    .profil-bio-wrap { margin-top:.8rem; }
+    .profil-bio { color:var(--white); font-size:.9rem; line-height:1.7; font-style:italic; }
+    .bio-edit-btn { background:none; border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:.3rem .7rem; border-radius:4px; font-size:.72rem; cursor:pointer; margin-top:.5rem; transition:all .3s; }
+    .bio-edit-btn:hover { background:rgba(212,175,55,0.1); }
+    .bio-textarea { width:100%; background:rgba(0,0,0,0.4); border:1px solid rgba(212,175,55,0.3); color:var(--white); padding:.6rem .9rem; border-radius:4px; font-size:.88rem; font-family:'Lato',sans-serif; resize:none; outline:none; margin-top:.5rem; }
+    .bio-textarea:focus { border-color:var(--gold); }
+
+    /* STATS */
+    .profil-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:1rem; margin-bottom:2rem; }
+    .stat-card { background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.15); border-radius:8px; padding:1.2rem; text-align:center; }
+    .stat-num { font-size:2rem; color:var(--gold); font-weight:700; }
+    .stat-label { color:var(--text-muted); font-size:.7rem; letter-spacing:1px; text-transform:uppercase; margin-top:.3rem; }
+    .stat-icon { font-size:1.3rem; margin-bottom:.3rem; }
+
+    /* SECTIONS */
+    .profil-section { background:rgba(255,255,255,0.02); border:1px solid rgba(212,175,55,0.12); border-radius:8px; padding:1.5rem; margin-bottom:1.5rem; }
+    .profil-section h3 { font-family:'Playfair Display',serif; color:var(--gold); font-size:1.05rem; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+
+    /* Mot de passe */
+    .pass-row { display:flex; gap:.8rem; }
+    .pass-row .form-group { flex:1; margin:0; }
+    .btn-save { background:var(--gold); border:none; color:var(--bg-dark); padding:.65rem 1.5rem; border-radius:4px; font-weight:700; font-size:.82rem; cursor:pointer; transition:all .3s; }
+    .btn-save:hover { background:var(--gold-light); }
+    .btn-danger { background:rgba(229,62,62,0.1); border:1px solid #e53e3e; color:#fc8181; padding:.65rem 1.5rem; border-radius:4px; font-size:.82rem; cursor:pointer; transition:all .3s; }
+    .btn-danger:hover { background:#e53e3e; color:#fff; }
+
+    /* Activité récente */
+    .activity-list { display:flex; flex-direction:column; gap:.6rem; }
+    .activity-item { display:flex; gap:.8rem; align-items:center; padding:.6rem; background:rgba(255,255,255,0.02); border-radius:4px; font-size:.83rem; color:var(--text-muted); }
+    .activity-icon { font-size:1.1rem; flex-shrink:0; }
+    .activity-empty { color:rgba(184,168,122,0.35); text-align:center; padding:1rem; font-size:.85rem; }
+
+    .not-logged { text-align:center; padding:5rem 2rem; }
+    .not-logged .icon { font-size:3rem; margin-bottom:1rem; }
+    .not-logged p { color:var(--text-muted); margin-bottom:1rem; }
+
+    @media(max-width:640px) { .profil-header{flex-direction:column;text-align:center;} .pass-row{flex-direction:column;} }
+  </style>
+</head>
+<body>
+<div class="page-content">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-tag">✦ Espace Personnel ✦</span>
+      <h2 class="section-title">Mon Profil</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- Non connecté -->
+    <div id="notLogged" class="not-logged" style="display:none;">
+      <div class="icon">🔒</div>
+      <p>Tu dois être connecté pour voir ton profil.</p>
+      <button class="btn-submit" style="max-width:200px;margin:0 auto;" onclick="openModal('login')">Se Connecter</button>
+    </div>
+
+    <!-- Profil -->
+    <div class="profil-wrap" id="profilContent" style="display:none;">
+
+      <!-- Header -->
+      <div class="profil-header">
+        <div class="profil-avatar-wrap">
+          <div class="profil-avatar" id="profilAvatar">
+            <img id="avatarImg" src="" alt="" style="display:none;"/>
+            <span id="avatarInitials"></span>
+          </div>
+          <button class="avatar-edit-btn" onclick="document.getElementById('avatarInput').click()" title="Changer la photo">✏</button>
+          <input type="file" id="avatarInput" accept="image/*" onchange="changeAvatar(this)"/>
+        </div>
+        <div class="profil-info">
+          <div class="profil-name" id="profilName"></div>
+          <div class="profil-role" id="profilRole"></div>
+          <div class="profil-country" id="profilCountry"></div>
+          <div class="profil-joined" id="profilJoined"></div>
+          <div class="profil-bio-wrap">
+            <div class="profil-bio" id="profilBioText">Aucune biographie pour l'instant.</div>
+            <textarea class="bio-textarea" id="profilBioInput" rows="3" placeholder="Parle de toi, de ta foi..." style="display:none;"></textarea>
+            <div style="display:flex;gap:.5rem;margin-top:.4rem;">
+              <button class="bio-edit-btn" id="bioEditBtn" onclick="toggleBioEdit()">✏ Modifier la bio</button>
+              <button class="bio-edit-btn" id="bioSaveBtn" onclick="saveBio()" style="display:none;background:rgba(212,175,55,0.15);">✓ Sauvegarder</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="profil-stats" id="profilStats">
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-num" id="statMsgs">0</div><div class="stat-label">Messages</div></div>
+        <div class="stat-card"><div class="stat-icon">❤️</div><div class="stat-num" id="statLikes">0</div><div class="stat-label">Likes donnés</div></div>
+        <div class="stat-card"><div class="stat-icon">💛</div><div class="stat-num" id="statDons">0</div><div class="stat-label">Dons</div></div>
+        <div class="stat-card"><div class="stat-icon">🗳</div><div class="stat-num" id="statVotes">0</div><div class="stat-label">Votes</div></div>
+      </div>
+
+      <!-- Activité récente -->
+      <div class="profil-section">
+        <h3>📋 Activité Récente</h3>
+        <div class="activity-list" id="activityList">
+          <div class="activity-empty">Aucune activité enregistrée.</div>
+        </div>
+      </div>
+
+      <!-- Sécurité -->
+      <div class="profil-section">
+        <h3>🔐 Changer le Mot de Passe</h3>
+        <div class="pass-row">
+          <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="newPass" placeholder="••••••••"/></div>
+          <div class="form-group"><label>Confirmer</label><input type="password" id="confirmPass" placeholder="••••••••"/></div>
+        </div>
+        <div style="margin-top:.8rem;">
+          <button class="btn-save" onclick="changePassword()">Sauvegarder</button>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="profil-section" style="border-color:rgba(229,62,62,0.2);">
+        <h3 style="color:#fc8181;">⚠ Zone Sensible</h3>
+        <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1rem;">La suppression de ton compte est irréversible.</p>
+        <button class="btn-danger" onclick="deleteAccount()">Supprimer mon compte</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="components.js"></script>
+<script src="auth.js"></script>
+<script src="i18n.js"></script>
+<script src="notifications.js"></script>
+<script>
+  let currentUser = null;
+
+  function loadProfil() {
+    currentUser = getSession();
+    if (!currentUser) { document.getElementById('notLogged').style.display='block'; return; }
+    document.getElementById('profilContent').style.display='block';
+
+    // Infos de base
+    const ini = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById('avatarInitials').textContent = ini;
+    document.getElementById('profilName').textContent     = currentUser.name;
+    document.getElementById('profilRole').textContent     = currentUser.role==='admin' ? '✦ Administrateur' : '✦ Membre';
+    document.getElementById('profilCountry').textContent  = currentUser.country ? '🌍 ' + currentUser.country : '';
+    document.getElementById('profilJoined').textContent   = currentUser.joined ? 'Inscrit le ' + currentUser.joined : '';
+
+    // Avatar sauvegardé
+    const savedAvatar = localStorage.getItem('glory_avatar_' + currentUser.email);
+    if (savedAvatar) {
+      document.getElementById('avatarImg').src = savedAvatar;
+      document.getElementById('avatarImg').style.display = 'block';
+      document.getElementById('avatarInitials').style.display = 'none';
+    }
+
+    // Bio
+    const bio = localStorage.getItem('glory_bio_' + currentUser.email);
+    if (bio) document.getElementById('profilBioText').textContent = bio;
+
+    // Stats
+    const msgs  = getMsgs().filter(m=>m.name===currentUser.name).length;
+    const likes  = parseInt(localStorage.getItem('glory_likes_'+currentUser.email)||'0');
+    const dons   = parseInt(localStorage.getItem('g_dons')||'0');
+    const votes  = parseInt(localStorage.getItem('glory_votes_'+currentUser.email)||'0');
+    document.getElementById('statMsgs').textContent  = msgs;
+    document.getElementById('statLikes').textContent = likes;
+    document.getElementById('statDons').textContent  = dons;
+    document.getElementById('statVotes').textContent = votes;
+
+    // Activité
+    loadActivity();
+  }
+
+  function loadActivity() {
+    const list = document.getElementById('activityList');
+    const activity = JSON.parse(localStorage.getItem('glory_activity_'+currentUser.email)||'[]');
+    if (activity.length===0) { list.innerHTML='<div class="activity-empty">Aucune activité enregistrée.</div>'; return; }
+    list.innerHTML = activity.slice(0,10).map(a=>`
+      <div class="activity-item">
+        <span class="activity-icon">${a.icon}</span>
+        <span>${a.text}</span>
+        <span style="margin-left:auto;font-size:.7rem;opacity:.5;">${a.date}</span>
+      </div>`).join('');
+  }
+
+  function changeAvatar(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      localStorage.setItem('glory_avatar_'+currentUser.email, e.target.result);
+      document.getElementById('avatarImg').src = e.target.result;
+      document.getElementById('avatarImg').style.display='block';
+      document.getElementById('avatarInitials').style.display='none';
+      toast('✅ Photo de profil mise à jour !');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function toggleBioEdit() {
+    const bioText  = document.getElementById('profilBioText');
+    const bioInput = document.getElementById('profilBioInput');
+    const editBtn  = document.getElementById('bioEditBtn');
+    const saveBtn  = document.getElementById('bioSaveBtn');
+    bioInput.value = bioText.textContent === 'Aucune biographie pour l\'instant.' ? '' : bioText.textContent;
+    bioText.style.display  = 'none';
+    bioInput.style.display = 'block';
+    editBtn.style.display  = 'none';
+    saveBtn.style.display  = 'inline-block';
+    bioInput.focus();
+  }
+
+  function saveBio() {
+    const bio = document.getElementById('profilBioInput').value.trim();
+    localStorage.setItem('glory_bio_'+currentUser.email, bio || '');
+    document.getElementById('profilBioText').textContent = bio || 'Aucune biographie pour l\'instant.';
+    document.getElementById('profilBioText').style.display='block';
+    document.getElementById('profilBioInput').style.display='none';
+    document.getElementById('bioEditBtn').style.display='inline-block';
+    document.getElementById('bioSaveBtn').style.display='none';
+    toast('✅ Biographie sauvegardée !');
+  }
+
+  function changePassword() {
+    const np = document.getElementById('newPass').value;
+    const cp = document.getElementById('confirmPass').value;
+    if (!np) { toast('Entre un nouveau mot de passe.'); return; }
+    if (np !== cp) { toast('❌ Les mots de passe ne correspondent pas.'); return; }
+    if (np.length < 6) { toast('❌ Minimum 6 caractères.'); return; }
+    const users = getUsers();
+    const idx   = users.findIndex(u=>u.email===currentUser.email);
+    if (idx !== -1) { users[idx].pass = np; saveUsers(users); }
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+    toast('✅ Mot de passe mis à jour !');
+  }
+
+  function deleteAccount() {
+    if (!confirm('Es-tu sûr de vouloir supprimer ton compte ? Cette action est irréversible.')) return;
+    const users = getUsers().filter(u=>u.email!==currentUser.email);
+    saveUsers(users);
+    localStorage.removeItem('glory_avatar_'+currentUser.email);
+    localStorage.removeItem('glory_bio_'+currentUser.email);
+    clearSession();
+    toast('Compte supprimé. Au revoir. 🙏');
+    setTimeout(()=>window.location.href='index.html', 1500);
+  }
+
+  window.addEventListener('DOMContentLoaded', loadProfil);
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GLORY – Sondages</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <style>
+    .poll-admin-form { background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.2); border-radius:8px; padding:2rem; margin-bottom:2.5rem; display:none; }
+    .poll-admin-form h3 { font-family:'Cinzel Decorative',cursive; color:var(--gold); font-size:1rem; margin-bottom:1.5rem; }
+    .options-list { display:flex; flex-direction:column; gap:.5rem; margin-bottom:.8rem; }
+    .option-row { display:flex; gap:.5rem; }
+    .option-row input { flex:1; }
+    .btn-add-opt { background:rgba(212,175,55,0.1); border:1px dashed rgba(212,175,55,0.35); color:var(--gold); padding:.5rem; border-radius:4px; cursor:pointer; font-size:.82rem; transition:all .3s; width:100%; text-align:center; }
+    .btn-add-opt:hover { background:rgba(212,175,55,0.18); }
+    .btn-rm-opt { background:rgba(229,62,62,0.1); border:1px solid rgba(229,62,62,0.25); color:#fc8181; width:30px; border-radius:4px; cursor:pointer; flex-shrink:0; }
+
+    .polls-grid { display:flex; flex-direction:column; gap:1.5rem; max-width:700px; margin:0 auto; }
+    .poll-card { background:rgba(255,255,255,0.02); border:1px solid rgba(212,175,55,0.15); border-radius:8px; padding:1.8rem; position:relative; }
+    .poll-card.closed { opacity:.7; }
+    .poll-status { position:absolute; top:1rem; right:1rem; font-size:.62rem; letter-spacing:2px; text-transform:uppercase; padding:.2rem .6rem; border-radius:3px; }
+    .poll-status.open { background:rgba(72,187,120,0.15); border:1px solid rgba(72,187,120,0.3); color:#68d391; }
+    .poll-status.closed { background:rgba(184,168,122,0.1); border:1px solid rgba(184,168,122,0.2); color:var(--text-muted); }
+    .poll-question { font-family:'Playfair Display',serif; color:var(--white); font-size:1.1rem; margin-bottom:1.2rem; line-height:1.5; padding-right:5rem; }
+    .poll-options { display:flex; flex-direction:column; gap:.7rem; margin-bottom:1.2rem; }
+    .poll-option { position:relative; border-radius:6px; overflow:hidden; cursor:pointer; transition:all .3s; border:1px solid rgba(212,175,55,0.15); }
+    .poll-option:hover:not(.voted) { border-color:rgba(212,175,55,0.4); }
+    .poll-option.my-vote { border-color:var(--gold); }
+    .poll-progress { position:absolute; inset:0; background:rgba(212,175,55,0.12); transition:width .5s ease; border-radius:6px; }
+    .poll-option.my-vote .poll-progress { background:rgba(212,175,55,0.22); }
+    .poll-option-content { position:relative; display:flex; justify-content:space-between; align-items:center; padding:.7rem 1rem; }
+    .poll-opt-text { font-size:.9rem; color:var(--white); }
+    .poll-opt-pct { font-size:.82rem; color:var(--gold); font-weight:700; }
+    .poll-opt-check { color:var(--gold); font-size:1rem; }
+    .poll-footer { display:flex; gap:1rem; align-items:center; font-size:.75rem; color:rgba(184,168,122,0.5); flex-wrap:wrap; }
+    .poll-total { color:var(--text-muted); }
+    .btn-close-poll { background:none; border:1px solid rgba(184,168,122,0.2); color:var(--text-muted); padding:.3rem .7rem; border-radius:3px; cursor:pointer; font-size:.72rem; transition:all .3s; }
+    .btn-close-poll:hover { border-color:#e53e3e; color:#fc8181; }
+    .btn-del-poll { background:none; border:none; color:rgba(229,62,62,0.5); cursor:pointer; font-size:.8rem; transition:color .2s; }
+    .btn-del-poll:hover { color:#e53e3e; }
+    .poll-login { font-size:.8rem; color:var(--text-muted); text-align:center; padding:.5rem; }
+    .poll-login span { color:var(--gold); cursor:pointer; }
+    .poll-empty { text-align:center; padding:4rem 2rem; color:var(--text-muted); }
+    .poll-date { font-size:.7rem; color:rgba(184,168,122,0.4); }
+  </style>
+</head>
+<body>
+<div class="page-content">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-tag" data-i18n="poll_tag">✦ Communauté ✦</span>
+      <h2 class="section-title" data-i18n="poll_title">Sondages & Votes</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- Admin: créer sondage -->
+    <div class="poll-admin-form" id="pollAdminForm">
+      <h3>🗳 Créer un Sondage</h3>
+      <div class="form-group">
+        <label>Question</label>
+        <input type="text" id="pollQuestion" placeholder="Pose ta question à la communauté..."/>
+      </div>
+      <div class="form-group">
+        <label>Options de réponse</label>
+        <div class="options-list" id="optionsList">
+          <div class="option-row"><input class="form-group input" type="text" placeholder="Option 1..." style="background:rgba(0,0,0,0.4);border:1px solid rgba(212,175,55,0.2);color:var(--white);padding:.65rem 1rem;border-radius:4px;outline:none;"/></div>
+          <div class="option-row"><input class="form-group input" type="text" placeholder="Option 2..." style="background:rgba(0,0,0,0.4);border:1px solid rgba(212,175,55,0.2);color:var(--white);padding:.65rem 1rem;border-radius:4px;outline:none;"/></div>
+        </div>
+        <button class="btn-add-opt" onclick="addOption()">+ Ajouter une option</button>
+      </div>
+      <div class="form-group">
+        <label>Durée</label>
+        <select id="pollDuration">
+          <option value="1">1 jour</option><option value="3">3 jours</option>
+          <option value="7" selected>7 jours</option><option value="14">14 jours</option>
+          <option value="0">Sans limite</option>
+        </select>
+      </div>
+      <button class="btn-submit" onclick="createPoll()">Publier le Sondage</button>
+    </div>
+
+    <!-- Sondages -->
+    <div class="polls-grid" id="pollsGrid"></div>
+    <div class="poll-empty" id="pollEmpty">
+      <div style="font-size:3rem;margin-bottom:1rem;">🗳</div>
+      <p>Aucun sondage pour le moment.</p>
+      <p style="font-size:.82rem;margin-top:.4rem;opacity:.5;">L'admin créera bientôt des sondages pour la communauté.</p>
+    </div>
+  </div>
+</div>
+
+<script src="components.js"></script>
+<script src="auth.js"></script>
+<script src="i18n.js"></script>
+<script src="notifications.js"></script>
+<script>
+  const getPolls  = () => JSON.parse(localStorage.getItem('glory_polls')||'[]');
+  const savePolls = d => localStorage.setItem('glory_polls', JSON.stringify(d));
+
+  let optCount = 2;
+
+  function addOption() {
+    optCount++;
+    const list = document.getElementById('optionsList');
+    const row  = document.createElement('div');
+    row.className = 'option-row';
+    row.innerHTML = `<input type="text" placeholder="Option ${optCount}..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid rgba(212,175,55,0.2);color:var(--white);padding:.65rem 1rem;border-radius:4px;outline:none;"/>
+      <button class="btn-rm-opt" onclick="this.parentElement.remove()">×</button>`;
+    list.appendChild(row);
+  }
+
+  function createPoll() {
+    const question = document.getElementById('pollQuestion').value.trim();
+    const duration = parseInt(document.getElementById('pollDuration').value);
+    const optInputs = document.querySelectorAll('#optionsList input');
+    const options   = Array.from(optInputs).map(i=>i.value.trim()).filter(Boolean);
+    if (!question) { toast('La question est requise.'); return; }
+    if (options.length < 2) { toast('Au moins 2 options requises.'); return; }
+    const polls = getPolls();
+    const expiresAt = duration > 0 ? Date.now() + duration*24*60*60*1000 : 0;
+    polls.unshift({
+      id: Date.now(),
+      question,
+      options: options.map(o=>({text:o, votes:[]})),
+      expiresAt,
+      closed: false,
+      createdAt: new Date().toLocaleDateString('fr')
+    });
+    savePolls(polls);
+    document.getElementById('pollQuestion').value='';
+    document.querySelectorAll('#optionsList input').forEach(i=>i.value='');
+    createNotif('post','Nouveau Sondage !', question, 'sondages.html');
+    renderPolls();
+    toast('✅ Sondage publié !');
+  }
+
+  function vote(pollId, optIdx) {
+    const user = getSession();
+    if (!user) { openModal('login'); return; }
+    const polls = getPolls();
+    const poll  = polls.find(p=>p.id===pollId);
+    if (!poll || poll.closed) return;
+    if (poll.expiresAt > 0 && Date.now() > poll.expiresAt) { poll.closed=true; savePolls(polls); renderPolls(); return; }
+    // Retirer vote existant
+    poll.options.forEach(o => {
+      const i = o.votes.indexOf(user.name);
+      if (i!==-1) o.votes.splice(i,1);
+    });
+    // Ajouter nouveau vote
+    poll.options[optIdx].votes.push(user.name);
+    savePolls(polls);
+    // Incrémenter compteur votes profil
+    const vk = 'glory_votes_'+user.email;
+    localStorage.setItem(vk, (parseInt(localStorage.getItem(vk)||'0')+1).toString());
+    renderPolls();
+  }
+
+  function closePoll(id) {
+    const polls = getPolls();
+    const poll  = polls.find(p=>p.id===id);
+    if (poll) { poll.closed=true; savePolls(polls); renderPolls(); toast('Sondage clôturé.'); }
+  }
+
+  function deletePoll(id) {
+    if (!confirm('Supprimer ce sondage ?')) return;
+    savePolls(getPolls().filter(p=>p.id!==id));
+    renderPolls(); toast('Sondage supprimé.');
+  }
+
+  function renderPolls() {
+    const polls  = getPolls();
+    const grid   = document.getElementById('pollsGrid');
+    const empty  = document.getElementById('pollEmpty');
+    const user   = getSession();
+    const isAdmin = user && user.role==='admin';
+    grid.innerHTML='';
+    if (polls.length===0) { empty.style.display='block'; return; }
+    empty.style.display='none';
+
+    polls.forEach(poll => {
+      // Vérifier expiration
+      if (poll.expiresAt>0 && Date.now()>poll.expiresAt) poll.closed=true;
+      const totalVotes = poll.options.reduce((s,o)=>s+o.votes.length,0);
+      const myVote     = user ? poll.options.findIndex(o=>o.votes.includes(user.name)) : -1;
+      const hasVoted   = myVote !== -1;
+
+      const card = document.createElement('div');
+      card.className = 'poll-card' + (poll.closed?' closed':'');
+      const optionsHtml = poll.options.map((opt,i)=>{
+        const pct   = totalVotes>0 ? Math.round(opt.votes.length/totalVotes*100) : 0;
+        const isMine = myVote===i;
+        const showResults = hasVoted || poll.closed;
+        return `<div class="poll-option${isMine?' my-vote':''}" onclick="${!poll.closed&&!hasVoted?`vote(${poll.id},${i})`:''}" style="cursor:${poll.closed||hasVoted?'default':'pointer'}">
+          ${showResults?`<div class="poll-progress" style="width:${pct}%"></div>`:''}
+          <div class="poll-option-content">
+            <span class="poll-opt-text">${opt.text}</span>
+            <span style="display:flex;align-items:center;gap:.4rem;">
+              ${showResults?`<span class="poll-opt-pct">${pct}%</span>`:''}
+              ${isMine?`<span class="poll-opt-check">✓</span>`:''}
+            </span>
+          </div>
+        </div>`;
+      }).join('');
+
+      const timeLeft = poll.expiresAt>0 && !poll.closed ? (() => {
+        const diff = poll.expiresAt - Date.now();
+        const days = Math.floor(diff/86400000);
+        const hrs  = Math.floor((diff%86400000)/3600000);
+        return days>0 ? `⏳ ${days}j ${hrs}h restants` : `⏳ ${hrs}h restantes`;
+      })() : '';
+
+      card.innerHTML = `
+        <span class="poll-status ${poll.closed?'closed':'open'}">${poll.closed?'Clôturé':'En cours'}</span>
+        <div class="poll-question">${poll.question}</div>
+        <div class="poll-options">${optionsHtml}</div>
+        ${!hasVoted && !poll.closed && user ? '' : ''}
+        ${!user&&!poll.closed?`<div class="poll-login"><span onclick="openModal('login')">Connecte-toi</span> pour voter</div>`:''}
+        <div class="poll-footer">
+          <span class="poll-total">👥 ${totalVotes} vote(s)</span>
+          ${timeLeft?`<span>${timeLeft}</span>`:''}
+          <span class="poll-date">Créé le ${poll.createdAt}</span>
+          ${isAdmin&&!poll.closed?`<button class="btn-close-poll" onclick="closePoll(${poll.id})">Clôturer</button>`:''}
+          ${isAdmin?`<button class="btn-del-poll" onclick="deletePoll(${poll.id})">🗑</button>`:''}
+        </div>`;
+      grid.appendChild(card);
+    });
+    // Sauvegarder si des sondages ont été clôturés auto
+    savePolls(polls);
+  }
+
+  window.addEventListener('DOMContentLoaded', ()=>{
+    const user = getSession();
+    if (user && user.role==='admin') document.getElementById('pollAdminForm').style.display='block';
+    renderPolls();
+  });
+</script>
+</body>
+</html>
