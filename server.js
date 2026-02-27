@@ -471,7 +471,12 @@ server.listen(PORT, () => {
 let firebaseAdmin = null;
 try {
   const admin = require('firebase-admin');
-  const serviceAccount = require('./serviceAccount.json');
+  let serviceAccount;
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+    serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+  } else {
+    serviceAccount = require('./serviceAccount.json');
+  }
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
