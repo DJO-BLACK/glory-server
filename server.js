@@ -447,18 +447,15 @@ io.on('connection', socket => {
   });
 
   // Route pour savoir si un live est actif
- socket.on('check_live', () => {
+  socket.on('check_live', () => {
     if (liveInfo && streamerSocketId) {
-      socket.join('live_room');
-      liveViewers.set(socket.id, { name: 'viewer', role: 'member' });
       socket.emit('live_info', { ...liveInfo, viewerCount: liveViewers.size });
-      io.to('live_room').emit('viewer_count', liveViewers.size);
-      socket.to(streamerSocketId).emit('viewer_joined', { viewerId: socket.id, name: 'Spectateur' });
     } else {
       socket.emit('no_live');
     }
   });
 });
+
 // ============================================
 // DÉMARRAGE
 // ============================================
@@ -467,3 +464,49 @@ server.listen(PORT, () => {
   console.log(`\n🚀 Serveur GLORY démarré sur http://localhost:${PORT}`);
   console.log(`📦 MongoDB: ${process.env.MONGODB_URI ? 'Configuré' : '⚠️ Non configuré'}`);
 });
+
+// ============================================
+// FIREBASE ADMIN — Notifications Push
+// ============================================
+let firebaseAdmin = null;
+try {
+  const admin = require('firebase-admin');
+  const serviceAccount = require('./serviceAccount.json');
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+  firebaseAdmin = admin;
+  console.log('✅ Firebase Admin initialisé');
+} catch(e) {
+  console.log('⚠️ Firebase Admin non disponible:', e.message);
+}
+
+// Sauvegarder le token FCM d'un utilisateur
+app.post('/api/fcm-token', authMiddleware, async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: 'Token requis' });
+  await User.findByIdAndUpdate(req.user.id, { fcmToken: token });
+  res.json({ success: true });
+});
+
+// Envoyer une notification push à tous les membres
+async function sendPushToAll(title, body, url = '/') {
+  if (!firebaseAdmin) return;
+  try {
+    const users = await User.find({ fcmToken: { $exists: true, $ne: '' } });
+    const tokens = users.map(u => u.fcmToken).filter(Boolean);
+    if (tokens.length === 0) return;
+    await firebaseAdmin.messaging().sendEachForMulticast({
+      tokens,
+      notification: { title, body },
+      data: { url },
+      webpush: {
+        notification: { icon: '/icon-192.png', badge: '/icon-192.png', vibrate: [200, 100, 200] },
+        fcmOptions: { link: url }
+      }
+    });
+    console.log(`📱 Notification envoyée à ${tokens.length} membres`);
+  } catch(e) {
+    console.error('Erreur push:', e);
+  }
+}
