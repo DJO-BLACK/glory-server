@@ -447,15 +447,18 @@ io.on('connection', socket => {
   });
 
   // Route pour savoir si un live est actif
-  socket.on('check_live', () => {
+ socket.on('check_live', () => {
     if (liveInfo && streamerSocketId) {
+      socket.join('live_room');
+      liveViewers.set(socket.id, { name: 'viewer', role: 'member' });
       socket.emit('live_info', { ...liveInfo, viewerCount: liveViewers.size });
+      io.to('live_room').emit('viewer_count', liveViewers.size);
+      socket.to(streamerSocketId).emit('viewer_joined', { viewerId: socket.id, name: 'Spectateur' });
     } else {
       socket.emit('no_live');
     }
   });
 });
-
 // ============================================
 // DÉMARRAGE
 // ============================================
