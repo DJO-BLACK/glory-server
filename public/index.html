@@ -19,21 +19,18 @@
     .hero-content h2{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.4rem);color:var(--white);margin-top:.8rem;letter-spacing:3px;font-weight:300;}
     .hero-divider{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:1.5rem auto;}
     .hero-desc{color:var(--text-muted);margin:0 auto 2rem;max-width:580px;line-height:1.9;}
-    .btn-cta{display:inline-block;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));color:var(--bg-dark);font-weight:700;font-size:.9rem;letter-spacing:3px;text-transform:uppercase;padding:1rem 2.5rem;border:none;cursor:pointer;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+    .btn-cta{display:inline-block;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));color:var(--bg-dark);font-weight:700;font-size:.9rem;letter-spacing:3px;text-transform:uppercase;padding:1rem 2.5rem;border:none;cursor:pointer;transition:all .3s;}
     .btn-cta:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(212,175,55,.5);}
-    /* ADMIN FORM */
     .admin-form-box{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:2rem;margin-bottom:2rem;display:none;}
     .admin-form-box h3{font-family:'Cinzel Decorative',cursive;color:var(--gold);font-size:1rem;margin-bottom:1.5rem;}
     .post-type-tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap;}
     .post-type-tab{padding:.5rem 1.1rem;border-radius:4px;cursor:pointer;font-size:.8rem;font-weight:700;border:1px solid rgba(212,175,55,.3);color:var(--text-muted);background:none;transition:all .3s;}
     .post-type-tab.active{background:var(--gold);color:var(--bg-dark);border-color:var(--gold);}
     .upload-area{border:2px dashed rgba(212,175,55,.3);border-radius:6px;padding:2rem;text-align:center;cursor:pointer;transition:all .3s;}
-    .upload-area:hover{border-color:var(--gold);background:rgba(212,175,55,.04);}
+    .upload-area:hover{border-color:var(--gold);}
     .upload-icon{font-size:2rem;margin-bottom:.5rem;}
     .upload-area p{color:var(--text-muted);font-size:.85rem;}
-    .media-preview-img{max-width:100%;max-height:200px;border-radius:6px;margin-top:.5rem;display:none;border:1px solid rgba(212,175,55,.2);}
-    .media-preview-vid{max-width:100%;max-height:200px;border-radius:6px;margin-top:.5rem;display:none;}
-    /* FEED */
+    .media-preview-img,.media-preview-vid{max-width:100%;max-height:200px;border-radius:6px;margin-top:.5rem;display:none;}
     .feed-wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;}
     .post-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:10px;overflow:hidden;transition:border-color .3s;}
     .post-card:hover{border-color:rgba(212,175,55,.35);}
@@ -42,12 +39,11 @@
     .post-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
     .post-author{font-size:.88rem;color:var(--white);font-weight:700;}
     .post-date{font-size:.7rem;color:rgba(184,168,122,.5);}
-    .post-type-label{margin-left:auto;font-size:.62rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);padding:.2rem .6rem;border-radius:3px;white-space:nowrap;}
+    .post-type-label{margin-left:auto;font-size:.62rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);padding:.2rem .6rem;border-radius:3px;}
     .post-media{background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;max-height:480px;}
     .post-media img{width:100%;height:auto;max-height:480px;object-fit:contain;display:block;background:#000;}
     .post-media video{width:100%;max-height:480px;display:block;background:#000;}
     .post-text{padding:1rem 1.2rem;color:var(--white);font-size:.92rem;line-height:1.75;}
-    .post-text.only-text{padding:1.4rem;}
     .post-actions{display:flex;gap:1rem;padding:.7rem 1.2rem;border-top:1px solid rgba(255,255,255,.05);align-items:center;}
     .action-btn{display:flex;align-items:center;gap:.4rem;background:none;border:none;color:var(--text-muted);font-size:.85rem;cursor:pointer;padding:.3rem .7rem;border-radius:6px;transition:all .3s;}
     .action-btn:hover{background:rgba(255,255,255,.05);color:var(--white);}
@@ -68,10 +64,12 @@
     .comment-input{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.2);color:var(--white);padding:.5rem .8rem;border-radius:4px;font-size:.83rem;font-family:'Lato',sans-serif;outline:none;}
     .comment-input:focus{border-color:var(--gold);}
     .comment-send{background:var(--gold);color:var(--bg-dark);border:none;padding:.5rem 1rem;border-radius:4px;font-weight:700;font-size:.78rem;cursor:pointer;}
-    .comment-send:hover{background:var(--gold-light);}
     .login-interact{font-size:.78rem;color:var(--text-muted);text-align:center;padding:.5rem;}
     .login-interact span{color:var(--gold);cursor:pointer;}
     .empty-feed{text-align:center;padding:4rem 2rem;color:var(--text-muted);}
+    .loading-feed{text-align:center;padding:3rem;color:var(--text-muted);}
+    .spinner{width:32px;height:32px;border:3px solid rgba(212,175,55,.2);border-top:3px solid var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;}
+    @keyframes spin{to{transform:rotate(360deg);}}
   </style>
 </head>
 <body>
@@ -81,177 +79,293 @@
     <div class="hero-content">
       <div class="hero-cross">✞</div>
       <h1>GLORY</h1>
-      <h2 data-i18n="hero_sub">Réunis dans Sa Présence</h2>
+      <h2>Réunis dans Sa Présence</h2>
       <div class="hero-divider"></div>
-      <p class="hero-desc" data-i18n="hero_desc">Une communauté mondiale pour adorer et parler du seul vrai DIEU.</p>
-      <button class="btn-cta" onclick="openModal('signup')" data-i18n="hero_cta">Rejoindre la Communauté</button>
+      <p class="hero-desc">Une communauté mondiale pour adorer et parler du seul vrai DIEU.</p>
+      <button class="btn-cta" onclick="openModal('signup')">Rejoindre la Communauté</button>
     </div>
   </div>
 
   <div class="section-wrap">
     <div class="section-header">
-      <span class="section-tag" data-i18n="feed_tag">✦ Publications ✦</span>
-      <h2 class="section-title" data-i18n="feed_title">La Parole du Jour</h2>
+      <span class="section-tag">✦ Publications ✦</span>
+      <h2 class="section-title">La Parole du Jour</h2>
       <div class="section-line"></div>
     </div>
 
-    <!-- Admin post form -->
-    <div class="admin-form-box" id="adminPostForm">
+    <!-- Formulaire admin -->
+    <div class="admin-form-box admin-only" id="adminPostForm">
       <h3>➕ Créer un Post</h3>
       <div class="post-type-tabs">
-        <button class="post-type-tab active" onclick="selType('texte',this)">📝 Texte</button>
-        <button class="post-type-tab" onclick="selType('photo',this)">📷 Photo</button>
-        <button class="post-type-tab" onclick="selType('video',this)">🎥 Vidéo</button>
+        <button class="post-type-tab active" onclick="switchPostType('texte',this)">📝 Texte</button>
+        <button class="post-type-tab" onclick="switchPostType('photo',this)">📷 Photo</button>
+        <button class="post-type-tab" onclick="switchPostType('video',this)">🎥 Vidéo</button>
       </div>
       <div class="form-group">
         <label>Catégorie</label>
-        <select id="pType"><option>Message</option><option>Prière</option><option>Étude Biblique</option><option>Annonce</option><option>Témoignage</option></select>
+        <select id="postCategory">
+          <option>Message</option><option>Prière</option><option>Témoignage</option>
+          <option>Annonce</option><option>Verset</option><option>Louange</option>
+        </select>
       </div>
-      <div class="form-group"><label>Titre</label><input type="text" id="pTitle" placeholder="Titre du post..."/></div>
-      <div class="form-group"><label>Message</label><textarea id="pContent" rows="4" placeholder="Écris ton message..."></textarea></div>
-      <div id="mediaSection" style="display:none;">
-        <div class="form-group">
-          <label id="mediaLabel">Média</label>
-          <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-icon" id="uploadIcon">📷</div>
-            <p id="uploadText">Clique pour choisir un fichier</p>
-          </div>
-          <input type="file" id="fileInput" style="display:none" onchange="previewFile(this)"/>
-          <img id="mediaPreviewImg" class="media-preview-img"/>
-          <video id="mediaPreviewVid" class="media-preview-vid" controls></video>
+      <div class="form-group">
+        <label>Titre</label>
+        <input type="text" id="postTitle" placeholder="Titre de ton post..."/>
+      </div>
+      <div class="form-group">
+        <label>Contenu</label>
+        <textarea id="postContent" rows="4" placeholder="Partage un message, une prière, un verset..."></textarea>
+      </div>
+      <div id="mediaUploadArea" style="display:none;">
+        <div class="upload-area" onclick="document.getElementById('mediaFile').click()">
+          <div class="upload-icon">📁</div>
+          <p id="uploadLabel">Clique pour choisir une photo</p>
         </div>
+        <input type="file" id="mediaFile" style="display:none;" onchange="previewMedia(this)"/>
+        <img class="media-preview-img" id="imgPreview"/>
+        <video class="media-preview-vid" id="vidPreview" controls></video>
       </div>
-      <button class="btn-submit" onclick="publishPost()" data-i18n="publish">Publier</button>
+      <button class="btn-submit" style="margin-top:1rem;" onclick="submitPost()">Publier ✦</button>
     </div>
 
-    <div class="feed-wrap" id="feedGrid"></div>
-    <div class="empty-feed" id="emptyFeed">
-      <div style="font-size:3rem;margin-bottom:1rem;">✞</div>
-      <p>Aucune publication pour le moment.</p>
+    <!-- Feed -->
+    <div class="feed-wrap" id="feedWrap">
+      <div class="loading-feed"><div class="spinner"></div><p>Chargement des publications...</p></div>
     </div>
   </div>
 </div>
 
+<script src="https://glory-server-production.up.railway.app/socket.io/socket.io.js"></script>
 <script src="components.js"></script>
-<script src="auth.js"></script>
+<script src="api.js"></script>
 <script src="i18n.js"></script>
 <script src="notifications.js"></script>
 <script>
-let curType='texte', mediaDataUrl=null, mediaFileType=null;
+const API_URL = 'https://glory-server-production.up.railway.app';
+const socket  = io(API_URL, { transports: ['websocket','polling'] });
 
-function selType(t,btn){
-  curType=t;
-  document.querySelectorAll('.post-type-tab').forEach(b=>b.classList.remove('active'));
+let currentPostType = 'texte';
+let allPosts = [];
+
+// ══ Type de post ══
+function switchPostType(type, btn) {
+  currentPostType = type;
+  document.querySelectorAll('.post-type-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const ms=document.getElementById('mediaSection');
-  ms.style.display=t==='texte'?'none':'block';
-  document.getElementById('uploadIcon').textContent=t==='photo'?'📷':'🎥';
-  document.getElementById('uploadText').textContent=t==='photo'?'Clique pour choisir une photo':'Clique pour choisir une vidéo';
-  document.getElementById('fileInput').accept=t==='photo'?'image/*':'video/*';
-  document.getElementById('mediaPreviewImg').style.display='none';
-  document.getElementById('mediaPreviewVid').style.display='none';
-  mediaDataUrl=null;
+  const mediaArea = document.getElementById('mediaUploadArea');
+  const label     = document.getElementById('uploadLabel');
+  mediaArea.style.display = type === 'texte' ? 'none' : 'block';
+  label.textContent = type === 'photo' ? 'Clique pour choisir une photo' : 'Clique pour choisir une vidéo';
+  document.getElementById('mediaFile').accept = type === 'photo' ? 'image/*' : 'video/*';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('vidPreview').style.display = 'none';
 }
 
-function previewFile(input){
-  const f=input.files[0]; if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    mediaDataUrl=e.target.result;
-    mediaFileType=f.type.startsWith('video')?'video':'image';
-    if(mediaFileType==='image'){document.getElementById('mediaPreviewImg').src=mediaDataUrl;document.getElementById('mediaPreviewImg').style.display='block';document.getElementById('mediaPreviewVid').style.display='none';}
-    else{document.getElementById('mediaPreviewVid').src=mediaDataUrl;document.getElementById('mediaPreviewVid').style.display='block';document.getElementById('mediaPreviewImg').style.display='none';}
-  };
-  r.readAsDataURL(f);
+function previewMedia(input) {
+  const file = input.files[0]; if (!file) return;
+  const img  = document.getElementById('imgPreview');
+  const vid  = document.getElementById('vidPreview');
+  const url  = URL.createObjectURL(file);
+  if (currentPostType === 'photo') { img.src = url; img.style.display = 'block'; vid.style.display = 'none'; }
+  else { vid.src = url; vid.style.display = 'block'; img.style.display = 'none'; }
 }
 
-function publishPost(){
-  const type=document.getElementById('pType').value;
-  const title=document.getElementById('pTitle').value.trim();
-  const content=document.getElementById('pContent').value.trim();
-  if(!title&&!content){toast('Ajoute un titre ou du contenu.');return;}
-  if(curType!=='texte'&&!mediaDataUrl){toast('Sélectionne un fichier.');return;}
-  const posts=getPosts();
-  posts.unshift({id:Date.now(),type,postType:curType,title,content,media:mediaDataUrl,mediaType:mediaFileType,date:new Date().toLocaleDateString('fr'),likes:[],comments:[]});
-  savePosts(posts);
-  document.getElementById('pTitle').value='';
-  document.getElementById('pContent').value='';
-  document.getElementById('mediaPreviewImg').style.display='none';
-  document.getElementById('mediaPreviewVid').style.display='none';
-  mediaDataUrl=null;
-  createNotif('post', title||'Nouvelle publication', content?content.substring(0,60)+'...':'Voir la publication', 'index.html');
-  renderFeed();
-  toast('✅ Post publié !');
-}
+// ══ Créer un post ══
+async function submitPost() {
+  const user = getSession(); if (!user) { openModal('login'); return; }
+  const title   = document.getElementById('postTitle').value.trim();
+  const content = document.getElementById('postContent').value.trim();
+  const type    = document.getElementById('postCategory').value;
+  if (!content && !title) { toast('Ajoute un titre ou du contenu.'); return; }
 
-function toggleLike(id){
-  const user=getSession(); if(!user){openModal('login');return;}
-  const posts=getPosts(),post=posts.find(p=>p.id===id); if(!post)return;
-  if(!post.likes)post.likes=[];
-  const i=post.likes.indexOf(user.name);
-  if(i===-1){post.likes.push(user.name);const lk='glory_likes_'+user.email;localStorage.setItem(lk,(parseInt(localStorage.getItem(lk)||'0')+1).toString());}
-  else post.likes.splice(i,1);
-  savePosts(posts);renderFeed();
-}
-
-function toggleComments(id){document.getElementById('cmt-'+id)?.classList.toggle('open');}
-
-function addComment(id){
-  const user=getSession(); if(!user){openModal('login');return;}
-  const input=document.getElementById('cinput-'+id);
-  const text=input.value.trim(); if(!text)return;
-  const posts=getPosts(),post=posts.find(p=>p.id===id); if(!post)return;
-  if(!post.comments)post.comments=[];
-  post.comments.push({name:user.name,role:user.role,text,time:new Date().toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})});
-  savePosts(posts);input.value='';renderFeed();
-  setTimeout(()=>document.getElementById('cmt-'+id)?.classList.add('open'),50);
-}
-
-function deletePost(id){
-  if(!confirm('Supprimer ce post ?'))return;
-  savePosts(getPosts().filter(p=>p.id!==id));renderFeed();toast('Post supprimé.');
-}
-
-function renderFeed(){
-  const posts=getPosts(),grid=document.getElementById('feedGrid'),empty=document.getElementById('emptyFeed');
-  const user=getSession(),isAdmin=user&&user.role==='admin';
-  grid.innerHTML='';
-  if(posts.length===0){empty.style.display='block';return;}
-  empty.style.display='none';
-  const savedAvatar=isAdmin?localStorage.getItem('glory_avatar_'+user?.email):null;
-
-  posts.forEach(p=>{
-    const liked=(p.likes||[]).includes(user?.name);
-    const lc=(p.likes||[]).length,cc=(p.comments||[]).length;
-    let mediaHtml='';
-    if(p.media){
-      mediaHtml=p.mediaType==='video'
-        ?`<div class="post-media"><video src="${p.media}" controls></video></div>`
-        :`<div class="post-media"><img src="${p.media}" alt="${p.title}" loading="lazy"/></div>`;
+  try {
+    let mediaUrl = '', mediaType = '';
+    const file = document.getElementById('mediaFile').files[0];
+    if (file && currentPostType !== 'texte') {
+      const fd = new FormData(); fd.append('media', file);
+      const res = await fetch(API_URL + '/api/posts/media', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd
+      });
+      const data = await res.json();
+      mediaUrl  = API_URL + data.url;
+      mediaType = currentPostType;
     }
-    const textHtml=(p.title||p.content)?`<div class="post-text${!p.media?' only-text':''}">${p.title?`<strong style="color:var(--gold);font-family:'Playfair Display',serif;font-size:1.05rem;display:block;margin-bottom:.4rem;">${p.title}</strong>`:''} ${p.content||''}</div>`:'';
-    const cmtsHtml=`<div class="comments-section" id="cmt-${p.id}">
-      ${(p.comments||[]).map(c=>{const ini=c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();return`<div class="comment-item"><div class="comment-av ${c.role==='admin'?'adm':''}">${ini}</div><div class="comment-bubble"><div class="comment-name ${c.role==='admin'?'adm':''}">${c.role==='admin'?'✦ ':''}${c.name}</div><div class="comment-text">${c.text}</div></div></div>`;}).join('')}
-      ${user?`<div class="comment-input-row"><input class="comment-input" type="text" id="cinput-${p.id}" placeholder="Ajoute un commentaire..." onkeydown="if(event.key==='Enter')addComment(${p.id})"/><button class="comment-send" onclick="addComment(${p.id})">Envoyer</button></div>`:`<p class="login-interact"><span onclick="openModal('login')">Connecte-toi</span> pour commenter</p>`}
-    </div>`;
-    const avatarHtml=savedAvatar?`<img src="${savedAvatar}" alt=""/>`:'AG';
-    const card=document.createElement('div');
-    card.className='post-card';
-    card.innerHTML=`<div class="post-header"><div class="post-avatar">${avatarHtml}</div><div><div class="post-author">Admin Glory</div><div class="post-date">${p.date}</div></div><span class="post-type-label">✦ ${p.type}</span></div>
-    ${mediaHtml}${textHtml}
-    <div class="post-actions">
-      <button class="action-btn${liked?' liked':''}" onclick="toggleLike(${p.id})">${liked?'❤️':'🤍'} ${lc>0?lc:''} J'aime</button>
-      <button class="action-btn" onclick="toggleComments(${p.id})">💬 ${cc>0?cc:''} Commentaires</button>
-      <button class="delete-post-btn${isAdmin?' visible':''}" onclick="deletePost(${p.id})" title="Supprimer">🗑</button>
-    </div>${cmtsHtml}`;
-    grid.appendChild(card);
-  });
+
+    const post = await apiCall('POST', '/api/posts', { type, postType: currentPostType, title, content, mediaUrl, mediaType }, true);
+    document.getElementById('postTitle').value   = '';
+    document.getElementById('postContent').value = '';
+    document.getElementById('mediaFile').value   = '';
+    document.getElementById('imgPreview').style.display = 'none';
+    document.getElementById('vidPreview').style.display = 'none';
+    toast('✅ Post publié !');
+    // Le post sera ajouté via Socket.io
+  } catch(e) { toast('❌ ' + e.message); }
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  renderFeed();
-  const user=getSession();
-  if(user&&user.role==='admin')document.getElementById('adminPostForm').style.display='block';
+// ══ Charger les posts ══
+async function fetchPosts() {
+  try {
+    allPosts = await loadPosts();
+    renderFeed(allPosts);
+  } catch(e) {
+    document.getElementById('feedWrap').innerHTML = '<div class="empty-feed">❌ Impossible de charger les publications.</div>';
+  }
+}
+
+function renderFeed(posts) {
+  const user = getSession();
+  const isAdmin = user && (user.role === 'admin' || user.role === 'subadmin');
+  const wrap = document.getElementById('feedWrap');
+  if (!posts || posts.length === 0) {
+    wrap.innerHTML = '<div class="empty-feed">Aucune publication pour le moment. Sois le premier à partager ! 🙏</div>';
+    return;
+  }
+  wrap.innerHTML = posts.map(p => {
+    const author = p.author || {};
+    const ini    = (author.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const isAdm  = author.role === 'admin' || author.role === 'subadmin';
+    const date   = new Date(p.createdAt).toLocaleDateString('fr');
+    const liked  = user && p.likes && p.likes.includes(user.id);
+    const mediaHtml = p.mediaUrl
+      ? (p.postType === 'photo'
+          ? `<div class="post-media"><img src="${p.mediaUrl}" alt=""/></div>`
+          : `<div class="post-media"><video src="${p.mediaUrl}" controls></video></div>`)
+      : '';
+    const commentsHtml = (p.comments||[]).map(c => {
+      const ci = (c.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      const ca = c.role === 'admin' || c.role === 'subadmin';
+      return `<div class="comment-item">
+        <div class="comment-av ${ca?'adm':''}">${ci}</div>
+        <div class="comment-bubble">
+          <div class="comment-name ${ca?'adm':''}">${ca?'✦ ':''}${c.name}</div>
+          <div class="comment-text">${c.text}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="post-card" id="post-${p._id}">
+      <div class="post-header">
+        <div class="post-avatar" style="${isAdm?'background:linear-gradient(135deg,#ff9800,#ffcc02)':''}">
+          ${author.avatar ? `<img src="${author.avatar}" alt=""/>` : ini}
+        </div>
+        <div>
+          <div class="post-author">${isAdm?'✦ ':''}${author.name||'Membre'}</div>
+          <div class="post-date">${date}</div>
+        </div>
+        <span class="post-type-label">${p.type||'Message'}</span>
+        ${isAdmin ? `<button class="delete-post-btn visible" onclick="removePost('${p._id}')">🗑 Supprimer</button>` : ''}
+      </div>
+      ${mediaHtml}
+      ${p.title ? `<div class="post-text"><strong>${p.title}</strong><br>${p.content||''}</div>` : (p.content ? `<div class="post-text">${p.content}</div>` : '')}
+      <div class="post-actions">
+        <button class="action-btn ${liked?'liked':''}" id="like-${p._id}" onclick="toggleLike('${p._id}')">
+          ${liked?'❤️':'🤍'} <span id="likeCount-${p._id}">${(p.likes||[]).length}</span> J'aime
+        </button>
+        <button class="action-btn" onclick="toggleComments('${p._id}')">
+          💬 <span>${(p.comments||[]).length}</span> Commentaires
+        </button>
+      </div>
+      <div class="comments-section" id="comments-${p._id}">
+        <div id="cmtList-${p._id}">${commentsHtml}</div>
+        ${user
+          ? `<div class="comment-input-row">
+               <input class="comment-input" type="text" id="cmtInput-${p._id}" placeholder="Ajoute un commentaire..." onkeydown="if(event.key==='Enter')addComment('${p._id}')"/>
+               <button class="comment-send" onclick="addComment('${p._id}')">↑</button>
+             </div>`
+          : `<div class="login-interact"><span onclick="openModal('login')">Connecte-toi</span> pour commenter</div>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleComments(id) {
+  document.getElementById('comments-' + id).classList.toggle('open');
+}
+
+async function toggleLike(id) {
+  const user = getSession(); if (!user) { openModal('login'); return; }
+  try {
+    const data = await likePost(id);
+    const liked = data.likes.includes(user.id);
+    const btn   = document.getElementById('like-' + id);
+    if (btn) {
+      btn.className = 'action-btn' + (liked ? ' liked' : '');
+      btn.innerHTML = `${liked?'❤️':'🤍'} <span id="likeCount-${id}">${data.likes.length}</span> J'aime`;
+    }
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+async function addComment(id) {
+  const user = getSession(); if (!user) { openModal('login'); return; }
+  const input = document.getElementById('cmtInput-' + id);
+  const text  = input.value.trim(); if (!text) return;
+  try {
+    await commentPost(id, text);
+    input.value = '';
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+async function removePost(id) {
+  if (!confirm('Supprimer ce post ?')) return;
+  try { await deletePost(id); } catch(e) { toast('❌ ' + e.message); }
+}
+
+// ══ Socket.io — Temps réel ══
+socket.on('new_post', post => {
+  allPosts.unshift(post);
+  renderFeed(allPosts);
+});
+
+socket.on('delete_post', id => {
+  allPosts = allPosts.filter(p => p._id !== id);
+  renderFeed(allPosts);
+});
+
+socket.on('update_likes', ({ postId, likes }) => {
+  const p = allPosts.find(x => x._id === postId);
+  if (p) p.likes = likes;
+  const user  = getSession();
+  const liked = user && likes.includes(user.id);
+  const btn   = document.getElementById('like-' + postId);
+  if (btn) {
+    btn.className = 'action-btn' + (liked ? ' liked' : '');
+    btn.innerHTML = `${liked?'❤️':'🤍'} <span>${likes.length}</span> J'aime`;
+  }
+});
+
+socket.on('new_comment', ({ postId, comment }) => {
+  const p = allPosts.find(x => x._id === postId);
+  if (p) { if (!p.comments) p.comments = []; p.comments.push(comment); }
+  const list = document.getElementById('cmtList-' + postId);
+  if (list) {
+    const ci = (comment.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const ca = comment.role === 'admin';
+    list.innerHTML += `<div class="comment-item">
+      <div class="comment-av ${ca?'adm':''}">${ci}</div>
+      <div class="comment-bubble">
+        <div class="comment-name ${ca?'adm':''}">${ca?'✦ ':''}${comment.name}</div>
+        <div class="comment-text">${comment.text}</div>
+      </div>
+    </div>`;
+  }
+});
+
+// Afficher le formulaire admin
+function onLoginSuccess() {
+  fetchPosts();
+  const user = getSession();
+  if (user && (user.role === 'admin' || user.role === 'subadmin')) {
+    document.getElementById('adminPostForm').style.display = 'block';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  fetchPosts();
+  const user = getSession();
+  if (user && (user.role === 'admin' || user.role === 'subadmin')) {
+    document.getElementById('adminPostForm').style.display = 'block';
+  }
 });
 </script>
 </body>
