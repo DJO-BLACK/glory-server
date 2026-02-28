@@ -340,13 +340,12 @@ io.on('connection', socket => {
   // ─────────────────────────────────────────
   // LIVE — Streamer démarre le live
   // ─────────────────────────────────────────
-  socket.on('start_live', ({ title, liveType, userName, userRole }) => {
+  socket.on('start_live', ({ title, roomName, userName }) => {
     streamerSocketId = socket.id;
-    liveInfo = { title, liveType };
+    liveInfo = { title, roomName };
     socket.join('live_room');
-    // Notifier tous les spectateurs qu'un live a démarré
-    io.emit('live_started', { title, liveType, viewerCount: 0 });
-    console.log(`🔴 Live démarré par ${userName}: ${title}`);
+    io.emit('live_started', { title, roomName });
+    console.log(`🔴 Live démarré par ${userName}: ${title} (${roomName})`);
   });
 
   // ─────────────────────────────────────────

@@ -6,62 +6,19 @@
   <link rel="stylesheet" href="style.css"/>
   <link rel="manifest" href="manifest.json"/>
   <style>
-    .live-setup{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:2rem;max-width:900px;margin:0 auto 2rem;display:none;}
+    .live-setup{background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:2rem;max-width:700px;margin:0 auto 2rem;display:none;}
     .live-setup h3{font-family:'Cinzel Decorative',cursive;color:var(--gold);font-size:1rem;margin-bottom:1.5rem;}
-    .live-type-btns{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.5rem;}
-    .live-type-btn{padding:.6rem 1.4rem;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:700;border:2px solid transparent;transition:all .3s;}
-    .live-type-btn.video{background:rgba(229,62,62,.1);border-color:#e53e3e;color:#fc8181;}
-    .live-type-btn.video.sel,.live-type-btn.video:hover{background:#e53e3e;color:#fff;}
-    .live-type-btn.audio{background:rgba(212,175,55,.1);border-color:var(--gold);color:var(--gold);}
-    .live-type-btn.audio.sel,.live-type-btn.audio:hover{background:var(--gold);color:var(--bg-dark);}
-    .btn-start-live{margin-top:1.5rem;background:linear-gradient(135deg,#c53030,#e53e3e);color:#fff;border:none;padding:.85rem 2.5rem;font-weight:700;font-size:.9rem;letter-spacing:2px;cursor:pointer;border-radius:6px;transition:all .3s;}
-    .btn-start-live:hover{filter:brightness(1.1);transform:translateY(-1px);}
-    .live-main{display:none;grid-template-columns:1fr 300px;gap:1.2rem;max-width:1100px;margin:0 auto;}
-    .live-main.active{display:grid;}
-    .live-player-box{position:relative;background:#000;border:2px solid rgba(212,175,55,.3);border-radius:8px;overflow:hidden;min-height:300px;display:flex;align-items:center;justify-content:center;}
-    .live-player-box video{width:100%;height:100%;object-fit:cover;display:block;min-height:300px;}
-    .live-placeholder-sm{text-align:center;color:var(--text-muted);padding:3rem 2rem;position:absolute;}
-    .live-placeholder-sm .ic{font-size:3rem;opacity:.3;margin-bottom:.8rem;}
-    .live-hud{position:absolute;top:0;left:0;right:0;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:10;}
+    .btn-start-live{margin-top:1.5rem;background:linear-gradient(135deg,#c53030,#e53e3e);color:#fff;border:none;padding:.85rem 2.5rem;font-weight:700;font-size:.9rem;letter-spacing:2px;cursor:pointer;border-radius:6px;transition:all .3s;width:100%;}
+    .btn-start-live:hover{filter:brightness(1.1);}
+    .btn-stop-live{background:#e53e3e;color:#fff;border:none;padding:.7rem 2rem;font-weight:700;font-size:.85rem;cursor:pointer;border-radius:6px;margin:1rem auto;display:block;}
+    .live-container{display:none;max-width:1100px;margin:0 auto;}
+    .live-container.active{display:block;}
+    .live-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;}
     .live-badge{background:red;color:#fff;font-size:.65rem;letter-spacing:2px;padding:.3rem .8rem;border-radius:3px;animation:blink 1s infinite;}
     @keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
-    .live-title-hud{background:rgba(0,0,0,.75);color:var(--gold);font-size:.88rem;padding:.35rem .8rem;border-radius:3px;font-family:'Playfair Display',serif;font-style:italic;margin-top:.4rem;}
-    .hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;}
-    .viewers-badge{background:rgba(0,0,0,.75);color:#fff;font-size:.78rem;padding:.3rem .7rem;border-radius:3px;}
-    .viewers-badge span{color:var(--gold);font-weight:700;}
-    .timer-badge{background:rgba(0,0,0,.75);color:#fff;font-size:.82rem;padding:.3rem .7rem;border-radius:3px;font-family:monospace;letter-spacing:2px;}
-    .reactions-float{position:absolute;bottom:0;left:0;right:0;height:100%;pointer-events:none;overflow:hidden;z-index:5;}
-    .float-emoji{position:absolute;bottom:-40px;font-size:1.8rem;animation:floatReact 3s ease forwards;}
-    @keyframes floatReact{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-280px) scale(1.3) translateX(var(--dx));opacity:0;}}
-    .live-sidebar{display:flex;flex-direction:column;gap:.8rem;}
-    .react-section{background:rgba(0,0,0,.3);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:.8rem;}
-    .react-section-title{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;}
-    .react-btns{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;}
-    .react-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.5rem .9rem;font-size:1.3rem;cursor:pointer;transition:all .2s;}
-    .react-btn:hover{transform:scale(1.3);}
-    .react-counts{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem;min-height:20px;}
-    .rc{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:.2rem;}
-    .live-cmt-box{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.15);border-radius:8px;display:flex;flex-direction:column;overflow:hidden;min-height:300px;}
-    .live-cmt-title{padding:.7rem 1rem;border-bottom:1px solid rgba(212,175,55,.1);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
-    .live-cmt-list{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.5rem;}
-    .live-cmt-list::-webkit-scrollbar{width:3px;}
-    .live-cmt-list::-webkit-scrollbar-thumb{background:var(--gold-dark);}
-    .live-cmt{display:flex;gap:.5rem;}
-    .live-cmt-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--bg-dark);flex-shrink:0;}
-    .live-cmt-av.adm{background:linear-gradient(135deg,#ff9800,#ffcc02);}
-    .live-cmt-body{background:rgba(255,255,255,.04);border-radius:4px;padding:.4rem .7rem;flex:1;}
-    .live-cmt-name{font-size:.65rem;color:var(--gold);font-weight:700;margin-bottom:.1rem;}
-    .live-cmt-name.adm{color:#ff9800;}
-    .live-cmt-text{font-size:.8rem;color:var(--white);line-height:1.4;}
-    .live-cmt-empty{color:rgba(184,168,122,.3);font-size:.8rem;text-align:center;margin:auto;padding:2rem;}
-    .live-cmt-input-wrap{padding:.7rem;border-top:1px solid rgba(212,175,55,.1);display:flex;gap:.5rem;}
-    .live-cmt-input{flex:1;background:rgba(0,0,0,.5);border:1px solid rgba(212,175,55,.2);color:var(--white);padding:.5rem .8rem;font-size:.82rem;border-radius:4px;outline:none;font-family:'Lato',sans-serif;}
-    .live-cmt-input:focus{border-color:var(--gold);}
-    .live-cmt-send{background:var(--gold);color:var(--bg-dark);border:none;padding:.5rem .9rem;font-weight:700;font-size:.78rem;cursor:pointer;border-radius:4px;}
-    .guest-cmt{text-align:center;padding:.7rem;font-size:.78rem;color:var(--text-muted);}
-    .guest-cmt span{color:var(--gold);cursor:pointer;}
-    .btn-stop-live{background:#e53e3e;color:#fff;border:none;padding:.7rem 1.8rem;font-weight:700;font-size:.85rem;cursor:pointer;border-radius:6px;display:none;margin:.8rem auto;display:none;}
-    /* Pas de live */
+    .live-title-text{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;font-style:italic;}
+    .viewers-count{background:rgba(0,0,0,.5);color:#fff;font-size:.78rem;padding:.3rem .8rem;border-radius:20px;}
+    #jitsiContainer{width:100%;height:600px;border-radius:8px;overflow:hidden;border:2px solid rgba(212,175,55,.3);background:#000;}
     .no-live-box{text-align:center;padding:4rem 2rem;background:rgba(255,255,255,.02);border:1px solid rgba(212,175,55,.12);border-radius:8px;max-width:600px;margin:0 auto;}
     .no-live-box .ic{font-size:3rem;margin-bottom:1rem;opacity:.4;}
     .live-schedule{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-top:2rem;}
@@ -69,10 +26,8 @@
     .schedule-date{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
     .schedule-card h4{font-family:'Playfair Display',serif;color:var(--white);margin-bottom:.3rem;}
     .schedule-card p{color:var(--text-muted);font-size:.83rem;}
-    .connecting-box{text-align:center;padding:2rem;color:var(--text-muted);}
-    .spinner{width:40px;height:40px;border:3px solid rgba(212,175,55,.2);border-top:3px solid var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    @media(max-width:768px){.live-main{grid-template-columns:1fr;}}
+    .join-btn{margin-top:1.5rem;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg-dark);border:none;padding:.85rem 2.5rem;font-weight:700;font-size:.9rem;letter-spacing:2px;cursor:pointer;border-radius:6px;display:none;}
+    @media(max-width:768px){#jitsiContainer{height:400px;}}
   </style>
 </head>
 <body>
@@ -85,91 +40,32 @@
     </div>
 
     <!-- Setup admin -->
-    <div class="live-setup" id="liveSetup">
+    <div class="live-setup admin-only" id="liveSetup">
       <h3>🔴 Démarrer un Live</h3>
       <div class="form-group">
         <label>Titre du live</label>
         <input type="text" id="liveTitle" placeholder="Ex: Culte du Dimanche, Soirée de Prière..."/>
       </div>
-      <div class="form-group">
-        <label>Type</label>
-        <div class="live-type-btns">
-          <button class="live-type-btn video sel" id="btnTypeVideo" onclick="selectType('video')">🎥 Vidéo + Audio</button>
-          <button class="live-type-btn audio" id="btnTypeAudio" onclick="selectType('audio')">🎙 Audio seulement</button>
-        </div>
-      </div>
       <button class="btn-start-live" onclick="startLive()">🔴 Lancer le Live</button>
     </div>
 
-    <!-- Pas de live en cours (pour les membres) -->
-    <div id="noLiveBox" class="no-live-box" style="display:none;">
+    <!-- Pas de live -->
+    <div id="noLiveBox" class="no-live-box">
       <div class="ic">📡</div>
       <p style="color:var(--white);font-size:1rem;margin-bottom:.5rem;">Aucun live en cours</p>
       <p style="color:var(--text-muted);font-size:.85rem;">L'admin démarrera bientôt un live. Tu seras notifié automatiquement !</p>
+      <button class="join-btn" id="joinBtn" onclick="joinLive()">🎥 Rejoindre le Live</button>
     </div>
 
     <!-- Live en cours -->
-    <div class="live-main" id="liveMain">
-      <div>
-        <div class="live-player-box" id="liveBox">
-          <!-- Streamer : sa propre caméra -->
-          <video id="localVideo" autoplay muted playsinline style="display:none;"></video>
-          <!-- Spectateur : flux reçu -->
-          <video id="remoteVideo" autoplay playsinline style="display:none;"></video>
-          <!-- Placeholder connexion -->
-          <div class="live-placeholder-sm" id="livePlaceholder">
-            <div class="connecting-box">
-              <div class="spinner"></div>
-              <p>Connexion au live...</p>
-            </div>
-          </div>
-          <div class="live-hud">
-            <div>
-              <span class="live-badge">🔴 EN DIRECT</span>
-              <div class="live-title-hud" id="liveTitleHud"></div>
-            </div>
-            <div class="hud-right">
-              <div class="viewers-badge">👁 <span id="viewersCount">0</span> spectateur(s)</div>
-              <div class="timer-badge" id="timerDisplay">00:00:00</div>
-            </div>
-          </div>
-          <div class="reactions-float" id="reactionsFloat"></div>
-        </div>
-        <div style="text-align:center;margin-top:.8rem;">
-          <button class="btn-stop-live" id="btnStopLive" onclick="stopLive()">⏹ Arrêter le Live</button>
-        </div>
+    <div class="live-container" id="liveContainer">
+      <div class="live-header">
+        <span class="live-badge">🔴 EN DIRECT</span>
+        <span class="live-title-text" id="liveTitleDisplay"></span>
+        <span class="viewers-count">👁 <span id="viewerCount">0</span> participant(s)</span>
       </div>
-      <div class="live-sidebar">
-        <!-- Réactions -->
-        <div class="react-section">
-          <div class="react-section-title">Réagir au live</div>
-          <div class="react-btns">
-            <button class="react-btn" onclick="sendReaction('👍')">👍</button>
-            <button class="react-btn" onclick="sendReaction('🧡')">🧡</button>
-            <button class="react-btn" onclick="sendReaction('🔥')">🔥</button>
-            <button class="react-btn" onclick="sendReaction('🙏')">🙏</button>
-            <button class="react-btn" onclick="sendReaction('❤️')">❤️</button>
-            <button class="react-btn" onclick="sendReaction('🎉')">🎉</button>
-          </div>
-          <div class="react-counts" id="reactCounts"></div>
-        </div>
-        <!-- Commentaires -->
-        <div class="live-cmt-box">
-          <div class="live-cmt-title">💬 Commentaires</div>
-          <div class="live-cmt-list" id="liveCommentsList">
-            <div class="live-cmt-empty">Les commentaires apparaîtront ici...</div>
-          </div>
-          <div class="live-cmt-input-wrap">
-            <div id="liveCmtInputArea" style="display:none;flex:1;">
-              <div style="display:flex;gap:.5rem;width:100%;">
-                <input class="live-cmt-input" type="text" id="liveCmtInput" placeholder="Commente..." onkeydown="if(event.key==='Enter')sendLiveComment()"/>
-                <button class="live-cmt-send" onclick="sendLiveComment()">↑</button>
-              </div>
-            </div>
-            <div class="guest-cmt" id="liveCmtGuest"><span onclick="openModal('login')">Connecte-toi</span> pour commenter</div>
-          </div>
-        </div>
-      </div>
+      <div id="jitsiContainer"></div>
+      <button class="btn-stop-live admin-only" id="btnStop" onclick="stopLive()" style="display:none;">⏹ Terminer le Live</button>
     </div>
 
     <!-- Programme -->
@@ -184,341 +80,194 @@
   </div>
 </div>
 
-<!-- Socket.io depuis le serveur -->
 <script src="https://glory-server-production.up.railway.app/socket.io/socket.io.js"></script>
 <script src="components.js"></script>
-<script src="auth.js"></script>
+<script src="api.js"></script>
 <script src="i18n.js"></script>
 <script src="notifications.js"></script>
 <script>
 const SERVER_URL = 'https://glory-server-production.up.railway.app';
-const socket     = io(SERVER_URL, { transports: ['websocket','polling'] });
+const socket = io(SERVER_URL, { transports: ['websocket','polling'] });
 
-let localStream     = null;
-let liveType        = 'video';
-let timerInt        = null;
-let startTime       = null;
-let isStreamer       = false;
-let reactionCounts  = {};
-// WebRTC — une connexion par spectateur (côté streamer) ou une connexion vers le streamer (côté spectateur)
-const peerConnections = {}; // viewerId -> RTCPeerConnection
-
-const ICE_SERVERS = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
-    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
-    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
-  ]
-};
-
-// ── Sélection type ──
-function selectType(t) {
-  liveType = t;
-  document.getElementById('btnTypeVideo').classList.toggle('sel', t==='video');
-  document.getElementById('btnTypeAudio').classList.toggle('sel', t==='audio');
-}
+let jitsiApi = null;
+let currentRoomName = null;
 
 // ══════════════════════════════════════
-// STREAMER — Démarrer le live
+// ADMIN — Démarrer le live
 // ══════════════════════════════════════
-async function startLive() {
+function startLive() {
   const title = document.getElementById('liveTitle').value.trim();
   if (!title) { toast('⚠ Donne un titre à ton live.'); return; }
   const user = getSession();
   if (!user) { openModal('login'); return; }
 
-  try {
-    const constraints = liveType === 'video'
-      ? { video: { width:1280, height:720, facingMode:'user' }, audio: true }
-      : { audio: true, video: false };
+  // Créer un nom de salle unique basé sur la date
+  const roomName = 'GLORY-' + Date.now();
 
-    localStream = await navigator.mediaDevices.getUserMedia(constraints);
+  // Notifier tous les membres via Socket.io
+  socket.emit('start_live', { title, roomName, userName: user.name });
 
-    isStreamer = true;
-    document.getElementById('liveSetup').style.display    = 'none';
-    document.getElementById('scheduleSection').style.display = 'none';
-    document.getElementById('liveMain').classList.add('active');
-    document.getElementById('btnStopLive').style.display  = 'inline-block';
-    document.getElementById('liveTitleHud').textContent   = title;
-    document.getElementById('livePlaceholder').style.display = 'none';
-
-    if (liveType === 'video') {
-      const lv = document.getElementById('localVideo');
-      lv.srcObject = localStream;
-      lv.style.display = 'block';
-    }
-
-    startTime = Date.now();
-    timerInt  = setInterval(updateTimer, 1000);
-
-    // Notifier le serveur
-    socket.emit('start_live', { title, liveType, userName: user.name, userRole: user.role });
-    createNotif('live', '🔴 Live démarré : ' + title, 'Rejoins le live GLORY maintenant !', 'lives.html');
-    updateCmtUI();
-    toast('🔴 Live "' + title + '" démarré ! Les membres peuvent maintenant le rejoindre.');
-
-  } catch(e) {
-    toast('❌ Autorise l\'accès caméra/micro dans ton navigateur.');
-    console.error(e);
-  }
+  // Lancer Jitsi pour l'admin
+  launchJitsi(roomName, user.name, true, title);
+  createNotif('live', '🔴 Live : ' + title, 'Rejoins le live GLORY maintenant !', 'lives.html');
+  toast('🔴 Live démarré ! Les membres peuvent maintenant rejoindre.');
 }
 
 // ══════════════════════════════════════
-// STREAMER — Nouveau spectateur rejoint → créer une offre WebRTC
+// MEMBRE — Rejoindre le live
 // ══════════════════════════════════════
-socket.on('viewer_joined', async ({ viewerId, name }) => {
-  if (!isStreamer || !localStream) return;
-  console.log(`📡 Spectateur rejoint: ${name} (${viewerId})`);
-
-  const pc = new RTCPeerConnection(ICE_SERVERS);
-  peerConnections[viewerId] = pc;
-
-  // Ajouter toutes les pistes du stream local
-  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-  // ICE candidates
-  pc.onicecandidate = ({ candidate }) => {
-    if (candidate) socket.emit('ice_candidate', { candidate, targetId: viewerId });
-  };
-
-  // Créer et envoyer l'offre
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-  socket.emit('webrtc_offer', { offer, targetId: viewerId });
-});
-
-// STREAMER — Recevoir la réponse du spectateur
-socket.on('webrtc_answer', async ({ answer, viewerId }) => {
-  const pc = peerConnections[viewerId];
-  if (pc) await pc.setRemoteDescription(new RTCSessionDescription(answer));
-});
-
-// STREAMER — Spectateur quitte
-socket.on('viewer_left', ({ viewerId }) => {
-  if (peerConnections[viewerId]) {
-    peerConnections[viewerId].close();
-    delete peerConnections[viewerId];
-  }
-});
-
-// ══════════════════════════════════════
-// SPECTATEUR — Rejoindre le live
-// ══════════════════════════════════════
-function joinLiveAsViewer() {
+function joinLive() {
   const user = getSession();
-  socket.emit('join_live', { userName: user?.name || 'Invité', userRole: user?.role || 'guest' });
+  if (!user) { openModal('login'); return; }
+  if (currentRoomName) {
+    launchJitsi(currentRoomName, user.name, false);
+  }
 }
 
-// SPECTATEUR — Recevoir l'offre WebRTC du streamer
-socket.on('webrtc_offer', async ({ offer, streamerId }) => {
-  if (isStreamer) return;
-  console.log('📡 Offre WebRTC reçue du streamer');
-
-  const pc = new RTCPeerConnection(ICE_SERVERS);
-  peerConnections[streamerId] = pc;
-
-  // ICE candidates
-  pc.onicecandidate = ({ candidate }) => {
-    if (candidate) socket.emit('ice_candidate', { candidate, targetId: streamerId });
-  };
-
-  // Afficher le flux vidéo reçu
-  pc.ontrack = (event) => {
-    console.log('🎥 Flux vidéo reçu !');
-    const rv = document.getElementById('remoteVideo');
-    rv.srcObject = event.streams[0];
-    rv.style.display = 'block';
-    document.getElementById('livePlaceholder').style.display = 'none';
-    toast('✅ Live connecté !');
-  };
-
-  await pc.setRemoteDescription(new RTCSessionDescription(offer));
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
-  socket.emit('webrtc_answer', { answer, streamerId });
-});
-
-// ICE candidates (pour les deux côtés)
-socket.on('ice_candidate', async ({ candidate, fromId }) => {
-  const pc = peerConnections[fromId];
-  if (pc && candidate) {
-    try { await pc.addIceCandidate(new RTCIceCandidate(candidate)); } catch(e) {}
+// ══════════════════════════════════════
+// Lancer Jitsi Meet
+// ══════════════════════════════════════
+function launchJitsi(roomName, displayName, isHost, title) {
+  // Charger le script Jitsi si pas encore chargé
+  if (!window.JitsiMeetExternalAPI) {
+    const script = document.createElement('script');
+    script.src = 'https://meet.jit.si/external_api.js';
+    script.onload = () => initJitsi(roomName, displayName, isHost, title);
+    document.head.appendChild(script);
+  } else {
+    initJitsi(roomName, displayName, isHost, title);
   }
-});
+}
 
-// ══════════════════════════════════════
-// ÉVÉNEMENTS SERVEUR
-// ══════════════════════════════════════
-
-// Un live a démarré → afficher pour les membres
-socket.on('live_started', ({ title, liveType: lt, viewerCount }) => {
-  if (isStreamer) return;
-  document.getElementById('noLiveBox').style.display       = 'none';
+function initJitsi(roomName, displayName, isHost, title) {
+  // Afficher le container
+  document.getElementById('noLiveBox').style.display = 'none';
   document.getElementById('scheduleSection').style.display = 'none';
-  document.getElementById('liveMain').classList.add('active');
-  document.getElementById('liveTitleHud').textContent = title;
-  document.getElementById('livePlaceholder').style.display = 'flex';
-  updateCmtUI();
-  joinLiveAsViewer();
-  createNotif('live', '🔴 Live en cours : ' + title, 'Clique pour regarder !', 'lives.html');
+  document.getElementById('liveContainer').classList.add('active');
+  document.getElementById('liveTitleDisplay').textContent = title || currentRoomName;
+  if (isHost) {
+    document.getElementById('liveSetup').style.display = 'none';
+    document.getElementById('btnStop').style.display = 'block';
+  }
+
+  // Nettoyer l'ancien Jitsi si existe
+  if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
+  document.getElementById('jitsiContainer').innerHTML = '';
+
+  const options = {
+    roomName: roomName,
+    parentNode: document.getElementById('jitsiContainer'),
+    userInfo: { displayName: displayName },
+    configOverwrite: {
+      startWithAudioMuted: false,
+      startWithVideoMuted: false,
+      enableWelcomePage: false,
+      prejoinPageEnabled: false,
+      disableDeepLinking: true,
+      defaultLanguage: 'fr',
+      toolbarButtons: ['microphone','camera','desktop','chat','raisehand','tileview','hangup']
+    },
+    interfaceConfigOverwrite: {
+      SHOW_JITSI_WATERMARK: false,
+      SHOW_WATERMARK_FOR_GUESTS: false,
+      TOOLBAR_ALWAYS_VISIBLE: true,
+      DEFAULT_BACKGROUND: '#0a0800',
+      BRAND_WATERMARK_LINK: '',
+      APP_NAME: 'GLORY Live',
+      NATIVE_APP_NAME: 'GLORY Live',
+      PROVIDER_NAME: 'GLORY',
+    }
+  };
+
+  jitsiApi = new window.JitsiMeetExternalAPI('meet.jit.si', options);
+
+  // Compter les participants
+  jitsiApi.addEventListeners({
+    participantJoined: () => updateViewerCount(),
+    participantLeft: () => updateViewerCount(),
+    videoConferenceLeft: () => {
+      if (!isHost) leaveLive();
+    }
+  });
+}
+
+function updateViewerCount() {
+  if (jitsiApi) {
+    const count = jitsiApi.getNumberOfParticipants();
+    document.getElementById('viewerCount').textContent = count;
+    socket.emit('update_viewer_count', count);
+  }
+}
+
+// ══════════════════════════════════════
+// ADMIN — Arrêter le live
+// ══════════════════════════════════════
+function stopLive() {
+  if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
+  socket.emit('stop_live');
+  document.getElementById('liveContainer').classList.remove('active');
+  document.getElementById('noLiveBox').style.display = 'block';
+  document.getElementById('scheduleSection').style.display = 'block';
+  document.getElementById('btnStop').style.display = 'none';
+  document.getElementById('liveSetup').style.display = 'block';
+  document.getElementById('liveTitle').value = '';
+  currentRoomName = null;
+  toast('⏹ Live terminé.');
+}
+
+function leaveLive() {
+  if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
+  document.getElementById('liveContainer').classList.remove('active');
+  document.getElementById('noLiveBox').style.display = 'block';
+  document.getElementById('scheduleSection').style.display = 'block';
+}
+
+// ══════════════════════════════════════
+// SOCKET.IO — Événements
+// ══════════════════════════════════════
+socket.on('live_started', ({ title, roomName }) => {
+  currentRoomName = roomName;
+  document.getElementById('noLiveBox').style.display = 'block';
+  document.getElementById('joinBtn').style.display = 'inline-block';
+  document.getElementById('joinBtn').textContent = '🎥 Rejoindre : ' + title;
+  createNotif('live', '🔴 Live en cours : ' + title, 'Clique pour rejoindre !', 'lives.html');
+  toast('🔴 Un live a démarré : ' + title + ' — Clique pour rejoindre !');
 });
 
-// Le live est terminé
 socket.on('live_ended', () => {
-  if (isStreamer) return;
-  document.getElementById('liveMain').classList.remove('active');
-  document.getElementById('noLiveBox').style.display       = 'block';
+  currentRoomName = null;
+  if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
+  document.getElementById('liveContainer').classList.remove('active');
+  document.getElementById('noLiveBox').style.display = 'block';
+  document.getElementById('joinBtn').style.display = 'none';
   document.getElementById('scheduleSection').style.display = 'block';
-  document.getElementById('remoteVideo').style.display     = 'none';
-  // Fermer les connexions WebRTC
-  Object.values(peerConnections).forEach(pc => pc.close());
-  Object.keys(peerConnections).forEach(k => delete peerConnections[k]);
   toast('⏹ Le live est terminé.');
 });
 
-// Mise à jour compteur spectateurs
 socket.on('viewer_count', count => {
-  document.getElementById('viewersCount').textContent = count;
+  document.getElementById('viewerCount').textContent = count;
 });
 
-// Info live (si on arrive en cours de live)
-socket.on('live_info', ({ title, liveType: lt, viewerCount }) => {
-  if (isStreamer) return;
-  document.getElementById('noLiveBox').style.display       = 'none';
-  document.getElementById('scheduleSection').style.display = 'none';
-  document.getElementById('liveMain').classList.add('active');
-  document.getElementById('liveTitleHud').textContent = title;
-  document.getElementById('viewersCount').textContent  = viewerCount;
-  updateCmtUI();
-  joinLiveAsViewer();
+socket.on('live_info', ({ title, roomName }) => {
+  currentRoomName = roomName;
+  document.getElementById('joinBtn').style.display = 'inline-block';
+  document.getElementById('joinBtn').textContent = '🎥 Rejoindre : ' + title;
 });
 
-// Pas de live actif
 socket.on('no_live', () => {
-  const user = getSession();
-  if (user && user.role === 'admin') return;
-  document.getElementById('noLiveBox').style.display = 'block';
+  document.getElementById('joinBtn').style.display = 'none';
 });
 
 // ══════════════════════════════════════
-// RÉACTIONS ET COMMENTAIRES
-// ══════════════════════════════════════
-function sendReaction(emoji) {
-  const user = getSession();
-  if (!user) { openModal('login'); return; }
-  socket.emit('live_reaction', { emoji, userName: user.name });
-}
-
-socket.on('live_reaction', ({ emoji, userName }) => {
-  if (!reactionCounts[emoji]) reactionCounts[emoji] = 0;
-  reactionCounts[emoji]++;
-  updateReactCounts();
-  spawnEmoji(emoji);
-});
-
-function spawnEmoji(emoji) {
-  const c = document.getElementById('reactionsFloat');
-  const el = document.createElement('div');
-  el.className = 'float-emoji';
-  el.textContent = emoji;
-  const dx = (Math.random() - .5) * 80 + 'px';
-  el.style.cssText = `left:${10 + Math.random()*80}%;--dx:${dx}`;
-  c.appendChild(el);
-  setTimeout(() => el.remove(), 3100);
-}
-
-function updateReactCounts() {
-  document.getElementById('reactCounts').innerHTML =
-    Object.entries(reactionCounts).filter(([,v])=>v>0)
-      .map(([k,v]) => `<div class="rc">${k} <strong style="color:var(--white)">${v}</strong></div>`).join('');
-}
-
-function sendLiveComment() {
-  const user = getSession(); if (!user) return;
-  const input = document.getElementById('liveCmtInput');
-  const text  = input.value.trim(); if (!text) return;
-  socket.emit('live_comment', { text, userName: user.name, userRole: user.role });
-  input.value = '';
-}
-
-socket.on('live_comment', ({ text, userName, userRole, time }) => {
-  const list = document.getElementById('liveCommentsList');
-  const empty = list.querySelector('.live-cmt-empty');
-  if (empty) empty.remove();
-  const ini = userName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  const d = document.createElement('div'); d.className = 'live-cmt';
-  d.innerHTML = `<div class="live-cmt-av ${userRole==='admin'?'adm':''}">${ini}</div>
-    <div class="live-cmt-body">
-      <div class="live-cmt-name ${userRole==='admin'?'adm':''}">${userRole==='admin'?'✦ ':''}${userName}</div>
-      <div class="live-cmt-text">${text}</div>
-    </div>`;
-  list.appendChild(d);
-  list.scrollTop = list.scrollHeight;
-});
-
-// ══════════════════════════════════════
-// STREAMER — Arrêter le live
-// ══════════════════════════════════════
-function stopLive() {
-  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-  clearInterval(timerInt); timerInt = null; startTime = null;
-  Object.values(peerConnections).forEach(pc => pc.close());
-  Object.keys(peerConnections).forEach(k => delete peerConnections[k]);
-  socket.emit('stop_live');
-  document.getElementById('liveMain').classList.remove('active');
-  document.getElementById('liveSetup').style.display      = 'block';
-  document.getElementById('scheduleSection').style.display = 'block';
-  document.getElementById('btnStopLive').style.display    = 'none';
-  document.getElementById('localVideo').style.display     = 'none';
-  document.getElementById('localVideo').srcObject         = null;
-  document.getElementById('timerDisplay').textContent     = '00:00:00';
-  document.getElementById('liveTitle').value              = '';
-  reactionCounts = {};
-  isStreamer = false;
-  toast('⏹ Live arrêté.');
-}
-
-// Timer
-function updateTimer() {
-  if (!startTime) return;
-  const el = Math.floor((Date.now() - startTime) / 1000);
-  const h = String(Math.floor(el/3600)).padStart(2,'0');
-  const m = String(Math.floor((el%3600)/60)).padStart(2,'0');
-  const s = String(el%60).padStart(2,'0');
-  document.getElementById('timerDisplay').textContent = h+':'+m+':'+s;
-}
-
-function updateCmtUI() {
-  const user = getSession();
-  const ia   = document.getElementById('liveCmtInputArea');
-  const g    = document.getElementById('liveCmtGuest');
-  if (user) { ia.style.display='flex'; g.style.display='none'; }
-  else       { ia.style.display='none'; g.style.display='block'; }
-}
-
-// ══════════════════════════════════════
-// INITIALISATION
+// INIT
 // ══════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   const user = getSession();
-  if (user && user.role === 'admin') {
+  if (user && (user.role === 'admin' || user.role === 'subadmin')) {
     document.getElementById('liveSetup').style.display = 'block';
-  } else {
-    document.getElementById('noLiveBox').style.display = 'block';
   }
-  updateCmtUI();
-
-  // Attendre que Socket.io soit connecté avant de vérifier le live
-  socket.on('connect', () => {
-    console.log('✅ Socket connecté:', socket.id);
-    socket.emit('check_live');
-  });
-  if (socket.connected) {
-    socket.emit('check_live');
-  }
+  socket.on('connect', () => socket.emit('check_live'));
+  if (socket.connected) socket.emit('check_live');
 });
 </script>
 </body>
